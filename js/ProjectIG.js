@@ -439,7 +439,9 @@ Dino.prototype.jump = function(){
 function createDino() {
   dino = new Dino();
   dino.mesh.scale.set(0.5,0.5,0.5);
-  dino.mesh.rotation.y = Math.PI/2;
+  dino.mesh.rotation.y = Math.PI/2 + 0.3;
+  dino.mesh.position.x = -70;
+  dino.mesh.position.y = -3;
   scene.add(dino.mesh);
   //dino.nod();
 }
@@ -450,11 +452,8 @@ Cactus = function() {
   this.mesh = new THREE.Group();
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
   this.body = new THREE.Mesh(bodyGeom, skinMat);
-
-
   var spikeGeom = new THREE.CubeGeometry(.5,2,.5,1);
   spikeGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,1,0));
-
   for (var i=0; i<9; i++){
     var row = (i%3);
     var col = Math.floor(i/3);
