@@ -9,13 +9,13 @@ var scene,
   clock;
 var delta = 0;
 var floorRadius = 1000;
-var speed = 0.5;
+var speed = 1;
 var distance = 0;
 var level = 1;
 var levelInterval;
 var levelUpdateFreq = 5000;
 var initSpeed = 5;
-var maxSpeed = 48;
+var maxSpeed = 40;
 var monsterPos = .65;
 var monsterPosTarget = .65;
 var floorRotation = 0;
@@ -28,8 +28,11 @@ var monsterAcceleration = 0.004;
 var malusClearColor = 0xb44b39;
 var malusClearAlpha = 0;
 
-var numCactus = 5;
-var cactuses = [numCactus];
+var duCactus = 2;
+var treCactus = 3;
+var cactus;
+var duCactuses = [duCactus];
+var treCactus = [treCactus];
 
 var fieldGameOver, fieldDistance;
 
@@ -375,64 +378,53 @@ Dino.prototype.run = function(){
   var amp = 2;
   var disp = .2;
 
-  //this.body.position.y = 6 + Math.sin(t - Math.PI/2)*amp;
   this.body.rotation.x = .2 + Math.sin(t - Math.PI/2)*amp*.1;
-
-  //this.torso.rotation.x =  Math.sin(t - Math.PI/2)*amp*.1;
-  //this.torso.position.y =  7 + Math.sin(t - Math.PI/2)*amp*.5;
-
-  //this.pawFR.rotation.x = Math.sin(t)*Math.PI/4;
-  //this.pawFR.position.y = -5.5 - Math.sin(t);
-  //this.pawFR.position.z = 7.5 + Math.cos(t);
-
-  //this.pawFL.rotation.x = Math.sin(t+.4)*Math.PI/4;
-  //this.pawFL.position.y = -5.5 - Math.sin(t+.4);
-  //this.pawFL.position.z = 7.5 + Math.cos(t+.4);
   this.pawBUL.rotation.x = - 1 + Math.sin(t+2)*Math.PI/10;
   this.pawBLL.rotation.x = 0.7 + Math.sin(t+2)*Math.PI/4;
-
-  //this.pawBUL.position.y = -5.5 - Math.sin(t+3.8);
-  //this.pawBUL.position.z = -7.5 + Math.cos(t+3.8);
-
   this.pawBUR.rotation.x = - 1 + Math.sin(t+6)*Math.PI/10;
   this.pawBLR.rotation.x = 0.7 + Math.sin(t+6)*Math.PI/4;
-
   this.footR.rotation.z = Math.sin(t + Math.PI/2)*amp*.1;
   this.footL.rotation.z = Math.sin(t + Math.PI/2)*amp*.1;
-  //this.pawBUR.position.y = -5.5 - Math.sin(t+3.4);
-  //this.pawBUR.position.z = -7.5 + Math.cos(t+3.4);
-
-  //this.torso.rotation.x = Math.sin(t)*Math.PI/8;
-  //this.torso.position.y = 3-Math.sin(t+Math.PI/2)*3;
-
-  //this.head.position.y = 5-Math.sin(t+Math.PI/2)*2;
-  //this.head.rotation.x = -.1+Math.sin(-t-1)*.4;
   this.head.rotation.x = -0.5 + Math.sin(t + Math.PI/2)*amp*.1;
   this.mouth.rotation.x = .2 + Math.sin(t+Math.PI+.3)*.4;
-
-  //this.tail.rotation.x = .2 + Math.sin(t-Math.PI/2);
-
-  //this.eyeR.scale.y = .5 + Math.sin(t+Math.PI)*.5;
-
 }
 
+var up=true;
+var fly=0;
 Dino.prototype.jump = function(){
-  if (this.status == "jumping") return;
-  this.status = "jumping";
+  //if (this.status == "jumping") return;
+  //this.status = "jumping";
   var _this = this;
-  var totalSpeed = 2 / speed;
-  var jumpHeight = 45;
+  var totalSpeed = speed/2;
+  var jumpHeight = 35;
 
-  /*TweenMax.to(this.pawBUL.rotation, totalSpeed, {x:"+=.7", ease:Back.easeOut});
-  TweenMax.to(this.pawBUR.rotation, totalSpeed, {x:"-=.7", ease:Back.easeOut});
-
-  TweenMax.to(this.mouth.rotation, totalSpeed, {x:.5, ease:Back.easeOut});
-  */
-  TweenMax.to(this.mesh.position, totalSpeed/2, {y:jumpHeight, ease:Power2.easeOut});
-  TweenMax.to(this.mesh.position, totalSpeed/2, {y:0, ease:Power4.easeIn, delay:totalSpeed/2, onComplete: function(){
+  if(up&&this.mesh.position.y<jumpHeight){
+    this.mesh.position.y+=totalSpeed;
+    return;
+  }
+  else if(fly<=10){
+    fly+=1;
+    return;
+  }
+  else if(this.mesh.position.y>=jumpHeight&&up){
+    up=false;
+    return;
+  }
+  else if(this.mesh.position.y>-3){
+    this.mesh.position.y-=totalSpeed;
+    if(this.mesh.position.y<-3){
+      this.mesh.position.y=-3;
+    }
+    return;
+  }
+  up=true;
+  fly=0;
+  this.status="running";
+  /*TweenMax.to(this.mesh.position, totalSpeed/2, {y:jumpHeight, ease:Power2.easeOut});
+  TweenMax.to(this.mesh.position, totalSpeed/2, {y:-3, ease:Power4.easeIn, delay:totalSpeed/2, onComplete: function(){
     //t = 0;
     _this.status="running";
-  }});
+  }});*/
 
 }
 
@@ -502,39 +494,89 @@ Cactus = function() {
   });
 }
 
-Cactus.prototype.nod = function( i){
-  console.log("i ="+i);
+Cactus.prototype.nod = function(){
   var _this = this;
-  var speed = .1 + i*Math.random()*.5;
-  var angle = -Math.PI/4 + i*Math.random()*Math.PI/2;
+  //var speed = .1 + i*Math.random()*.5;
+  var speed = 0;
+  //var angle = -Math.PI/4 + Math.random()*Math.PI/2;
 }
 
 function createCactus(){
-  for (var i = 0; i<numCactus; i++){
-    cactuses[i] = new Cactus();
-    cactuses[i].mesh.position.y = floorRadius+4;
-    //cactuses[i].mesh.position.x = 4*i;
-    //cactuses[i].nod(i);
-    scene.add(cactuses[i].mesh);
-  }
+  cactus = new Cactus();
+  cactus.mesh.position.y = floorRadius+4;
+  //cactuses[i].mesh.position.x = 4*i;
+  cactus.nod;
+  scene.add(cactus.mesh);
 }
 
+function createDuCactus(){
+  duCactuses[0] = new Cactus();
+  duCactuses[0].mesh.position.y = floorRadius+4;
+  duCactuses[1] = new Cactus();
+  duCactuses[1].mesh.position.y = floorRadius+4;
+  scene.add(duCactuses[0].mesh);
+  scene.add(duCactuses[1].mesh);
+}
+
+function createTreCactus(){
+  duCactuses[0] = new Cactus();
+  duCactuses[0].mesh.position.y = floorRadius+4;
+  duCactuses[1] = new Cactus();
+  duCactuses[1].mesh.position.y = floorRadius+4;
+  duCactuses[2] = new Cactus();
+  duCactuses[2].mesh.position.y = floorRadius+4;
+  scene.add(duCactuses[0].mesh);
+  scene.add(duCactuses[1].mesh);
+  scene.add(duCactuses[2].mesh);
+}
+
+
 function updateFloorRotation(){
-  floorRotation += delta*.03 * speed;
+  floorRotation += delta*.02 * speed;
   floorRotation = floorRotation%(Math.PI*2);
   floor.rotation.z = floorRotation;
 }
 
 function updateCactusPosition(){
-  for (var i = 0; i<numCactus; i++){
-    if (floorRotation+cactuses[i].angle > 2.5 ){
-      cactuses[i].angle = -floorRotation + Math.random()*.8;
-      //cactus.body.rotation.y = Math.random() * Math.PI*2;
-    }
-    cactuses[i].mesh.rotation.z = floorRotation + cactuses[i].angle - Math.PI/2;
-    cactuses[i].mesh.position.y = -floorRadius + Math.sin(floorRotation+cactuses[i].angle) * (floorRadius+3);
-    cactuses[i].mesh.position.x = Math.cos(floorRotation+cactuses[i].angle) * (floorRadius+3);
+  if (floorRotation+cactus.angle > 2.5 ){
+    cactus.angle = -floorRotation + Math.random()*.8;
+    //cactus.body.rotation.y = Math.random() * Math.PI*2;
   }
+  cactus.mesh.rotation.z = floorRotation + cactus.angle - Math.PI/2;
+  cactus.mesh.position.y = -floorRadius + Math.sin(floorRotation+cactus.angle) * (floorRadius+3);
+  cactus.mesh.position.x = Math.cos(floorRotation+cactus.angle) * (floorRadius+3);
+}
+
+function updateDuCactusPosition(){
+  /*if (floorRotation+duCactuses[i].angle > 2.5 ){
+    duCactuses[i].angle = -floorRotation + Math.random()*.8;
+    //cactus.body.rotation.y = Math.random() * Math.PI*2;
+  }*/
+  duCactuses[0].mesh.rotation.z = floorRotation + duCactuses[0].angle - Math.PI/2;
+  duCactuses[0].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[0].angle) * (floorRadius+3);
+  duCactuses[0].mesh.position.x = Math.cos(floorRotation+duCactuses[0].angle) * (floorRadius+3);
+  //console.log(duCactuses[0].mesh.position.x);
+  duCactuses[1].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
+  duCactuses[1].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
+  duCactuses[1].mesh.position.x = duCactuses[0].mesh.position.x + 10;
+}
+
+function updateTreCactusPosition(){
+  /*if (floorRotation+duCactuses[i].angle > 2.5 ){
+    duCactuses[i].angle = -floorRotation + Math.random()*.8;
+    //cactus.body.rotation.y = Math.random() * Math.PI*2;
+  }*/
+  duCactuses[0].mesh.rotation.z = floorRotation + duCactuses[0].angle - Math.PI/2;
+  duCactuses[0].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[0].angle) * (floorRadius+3);
+  duCactuses[0].mesh.position.x = Math.cos(floorRotation+duCactuses[0].angle) * (floorRadius+3);
+  //console.log(duCactuses[0].mesh.position.x);
+  duCactuses[1].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
+  duCactuses[1].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
+  duCactuses[1].mesh.position.x = duCactuses[0].mesh.position.x + 10;
+
+  duCactuses[2].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
+  duCactuses[2].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
+  duCactuses[2].mesh.position.x = duCactuses[1].mesh.position.x + 10;
 }
 
 function updateLevel(){
@@ -551,12 +593,11 @@ function updateDistance(){
 
 function checkCollision(){
   var dm;
-  for (var i = 0; i<numCactus; i++){
-    dm = dino.mesh.position.clone().sub(cactuses[i].mesh.position.clone());
-    if(dm.length() < collisionCactus){
-      gameOver();
-    }
+  dm = dino.mesh.position.clone().sub(cactus.mesh.position.clone());
+  if(dm.length() < collisionCactus){
+    gameOver();
   }
+
 }
 
 function gameOver(){
@@ -564,12 +605,12 @@ function gameOver(){
   gameStatus = "gameOver";
   TweenMax.to(this, 1, {speed:0});
   TweenMax.to(camera.position, 3, {z:cameraPosGameOver, y: 60, x:-30});
-  cactus.mesh.visible = false;
+  //cactus.mesh.visible = false;
   clearInterval(levelInterval);
 }
 
 function handleMouseDown(event){
-  if (gameStatus == "play") dino.jump();
+  if (gameStatus == "play") dino.status="jumping";
   else if (gameStatus == "readyToReplay"){
     replay();
   }
@@ -582,11 +623,16 @@ function loop(){
   if (gameStatus == "play"){
 
     if (dino.status == "running"){
-    dino.run();
+      dino.run();
+    }
+    if (dino.status == "jumping"){
+      dino.jump();
     }
     updateDistance();
-    updateCactusPosition();
-    checkCollision();
+    //updateCactusPosition();
+    updateDuCactusPosition();
+    updateTreCactusPosition();
+    //checkCollision();
     /*updateMonsterPosition();
     updateCarrotPosition();
     */
@@ -610,7 +656,9 @@ function init(event){
   createFirs();
   createCarrot();
   createBonusParticles();*/
-  createCactus();
+  //createCactus();
+  createDuCactus();
+  createTreCactus();
   initUI();
   //resetGame();
   updateLevel();
