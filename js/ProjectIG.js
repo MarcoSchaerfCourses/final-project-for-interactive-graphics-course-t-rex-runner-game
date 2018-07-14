@@ -79,12 +79,12 @@ var greenMat = new THREE.MeshPhongMaterial({
     shading:THREE.FlatShading,
   });
   var skinMat = new THREE.MeshPhongMaterial({
-    color: 0xff9ea5,
+    color: 0x347C2C,
     shading:THREE.FlatShading
   });
 
 var darkGreenMat = new THREE.MeshPhongMaterial({
-    color: 0x7abf8e,
+    color: 0x254117,
     shininess:0,
     shading:THREE.FlatShading,
   });
@@ -212,19 +212,19 @@ Dino = function() {
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
   var torsoGeom = new THREE.CubeGeometry(15,20,15, 1);
-  this.torso = new THREE.Mesh(torsoGeom, brownMat);
+  this.torso = new THREE.Mesh(torsoGeom, darkGreenMat);
   this.torso.rotation.x = 0.33;
 
   var headGeom = new THREE.CubeGeometry(20,20,40, 1);
   headGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,20));
-  this.head = new THREE.Mesh(headGeom, brownMat);
+  this.head = new THREE.Mesh(headGeom, darkGreenMat);
   this.head.position.z = -3;
   this.head.position.y = 19;
   this.head.rotation.x = - 0.33;
 
   var mouthGeom = new THREE.CubeGeometry(10,4,20, 1);
   mouthGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,-2,10));
-  this.mouth = new THREE.Mesh(mouthGeom, brownMat);
+  this.mouth = new THREE.Mesh(mouthGeom, darkGreenMat);
   this.mouth.position.y = -8;
   this.mouth.rotation.x = .4;
   this.mouth.position.z = 4;
@@ -287,7 +287,7 @@ Dino = function() {
   tailGeom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
   tailGeom.applyMatrix(new THREE.Matrix4().makeRotationZ(Math.PI/4));
 
-  this.tail = new THREE.Mesh(tailGeom, brownMat);
+  this.tail = new THREE.Mesh(tailGeom, darkGreenMat);
   this.tail.position.z = -6;
   this.tail.position.y = -8;
   this.tail.rotation.x = -0.66;
@@ -295,7 +295,7 @@ Dino = function() {
 
   var pawGeom = new THREE.CylinderGeometry(1.5,0,10);
   pawGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,-5,0));
-  this.pawFL = new THREE.Mesh(pawGeom, brownMat);
+  this.pawFL = new THREE.Mesh(pawGeom, darkGreenMat);
   this.pawFL.position.y = 3.5;
   this.pawFL.position.z = 5.5;
   this.pawFL.position.x = 5.5;
@@ -308,7 +308,7 @@ Dino = function() {
 
   var UpperPawGeom = new THREE.CylinderGeometry(6,2,12);
   UpperPawGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,-5,-10));
-  this.pawBUR = new THREE.Mesh(UpperPawGeom, brownMat);
+  this.pawBUR = new THREE.Mesh(UpperPawGeom, darkGreenMat);
   this.pawBUR.position.y = 0.5;
   this.pawBUR.position.z = 8.5;
   this.pawBUR.position.x = 5.5;
@@ -321,7 +321,7 @@ Dino = function() {
 
   var LowerPawGeom = new THREE.CylinderGeometry(2,0,10);
   LowerPawGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,-5,0));
-  this.pawBLR = new THREE.Mesh(LowerPawGeom, brownMat);
+  this.pawBLR = new THREE.Mesh(LowerPawGeom, darkGreenMat);
   this.pawBLR.position.y = -10.5;
   this.pawBLR.position.z = -10;
   this.pawBLR.position.x = 0.5;
@@ -329,8 +329,18 @@ Dino = function() {
   this.pawBUR.add(this.pawBLR);
 
   this.pawBLL = this.pawBLR.clone();
-  //this.pawBLL.position.x = -this.pawBLR.position.x;
   this.pawBUL.add(this.pawBLL);
+
+  var Foot = new THREE.BoxGeometry(5,7,3);
+  this.footR = new THREE.Mesh(Foot, darkGreenMat);
+  this.footR.position.y = -8;
+  this.footR.position.z = 3;
+  this.footR.position.x = 0;
+  this.footR.rotation.x = 190;
+  this.pawBLR.add(this.footR);
+
+  this.footL = this.footR.clone();
+  this.pawBLL.add(this.footL);
 
   this.mesh.add(this.body);
   this.torso.add(this.head);
@@ -386,6 +396,9 @@ Dino.prototype.run = function(){
 
   this.pawBUR.rotation.x = - 1 + Math.sin(t+6)*Math.PI/10;
   this.pawBLR.rotation.x = 0.7 + Math.sin(t+6)*Math.PI/4;
+
+  this.footR.rotation.z = Math.sin(t + Math.PI/2)*amp*.1;
+  this.footL.rotation.z = Math.sin(t + Math.PI/2)*amp*.1;
   //this.pawBUR.position.y = -5.5 - Math.sin(t+3.4);
   //this.pawBUR.position.z = -7.5 + Math.cos(t+3.4);
 
@@ -436,7 +449,7 @@ Cactus = function() {
   //this.status="ready";
   this.mesh = new THREE.Group();
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
-  this.body = new THREE.Mesh(bodyGeom, darkGreenMat);
+  this.body = new THREE.Mesh(bodyGeom, skinMat);
 
 
   var spikeGeom = new THREE.CubeGeometry(.5,2,.5,1);
@@ -445,35 +458,35 @@ Cactus = function() {
   for (var i=0; i<9; i++){
     var row = (i%3);
     var col = Math.floor(i/3);
-    var sb = new THREE.Mesh(spikeGeom, blackMat);
+    var sb = new THREE.Mesh(spikeGeom, whiteMat);
     sb.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
     sb.position.z = -3;
     sb.position.y = -2 + row*10;
     sb.position.x = -2 + col*2;
     this.body.add(sb);
 
-    var sf = new THREE.Mesh(spikeGeom, blackMat);
+    var sf = new THREE.Mesh(spikeGeom, whiteMat);
     sf.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
     sf.position.z = 5;
     sf.position.y = -2 + row*10;
     sf.position.x = -2 + col*2;
     this.body.add(sf);
 
-    var st = new THREE.Mesh(spikeGeom, blackMat);
+    var st = new THREE.Mesh(spikeGeom, whiteMat);
     st.position.y = 17;
     st.position.x = -2 + row*2;
     st.position.z = -2 + col*2;
     st.rotation.z = Math.PI/6 - (Math.PI/6*row) -.5 +  Math.random();
     this.body.add(st);
 
-    var sr = new THREE.Mesh(spikeGeom, blackMat);
+    var sr = new THREE.Mesh(spikeGeom, whiteMat);
     sr.position.x = 3;
     sr.position.y = -2 + row*10;
     sr.position.z = -2 + col*2;
     sr.rotation.z = -Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
     this.body.add(sr);
 
-    var sl = new THREE.Mesh(spikeGeom, blackMat);
+    var sl = new THREE.Mesh(spikeGeom, whiteMat);
     sl.position.x = -3;
     sl.position.y = -2 + row*10;
     sl.position.z = -2 + col*2;
