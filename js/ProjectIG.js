@@ -34,7 +34,7 @@ var cactus;
 var duCactuses = [duCactus];
 var treCactus = [treCactus];
 
-var fieldGameOver, fieldDistance;
+var fieldGameOver, fieldDistance, fieldInstruction, fieldDist, fieldButtonStart, fieldPicture, fieldButtonRestart;
 
 //SCREEN & MOUSE VARIABLES
 
@@ -593,7 +593,7 @@ function updateDistance(){
 
 function checkCollision(){
   var dm;
-  dm = dino.mesh.position.clone().sub(cactus.mesh.position.clone());
+  dm = dino.mesh.position.clone().sub(duCactuses[0].mesh.position.clone());
   if(dm.length() < collisionCactus){
     gameOver();
   }
@@ -603,17 +603,14 @@ function checkCollision(){
 function gameOver(){
   fieldGameOver.className = "show";
   gameStatus = "gameOver";
-  TweenMax.to(this, 1, {speed:0});
-  TweenMax.to(camera.position, 3, {z:cameraPosGameOver, y: 60, x:-30});
+  fieldButtonRestart.className = "show";
+  document.getElementById("Restart").onclick = function() { resetGame();};
   //cactus.mesh.visible = false;
   clearInterval(levelInterval);
 }
 
 function handleMouseDown(event){
   if (gameStatus == "play") dino.status="jumping";
-  else if (gameStatus == "readyToReplay"){
-    replay();
-  }
 }
 
 function loop(){
@@ -647,7 +644,40 @@ function render(){
 
 window.addEventListener('load', init, false);
 
+
+function resetGame(){
+
+  fieldGameOver.className = "Notshow";
+
+  scene.add(dino.mesh);
+  dino.mesh.rotation.y = Math.PI/2 + 0.3;
+  dino.mesh.position.x = -70;
+  dino.mesh.position.y = -3;
+
+  speed = initSpeed;
+  level = 0;
+  distance = 0;
+
+  duCactuses[0].mesh.position.y = floorRadius+4;
+  duCactuses[1].mesh.position.y = floorRadius+4;
+  duCactuses[2].mesh.position.y = floorRadius+4;
+  scene.add(duCactuses[0].mesh);
+  scene.add(duCactuses[1].mesh);
+  scene.add(duCactuses[2].mesh);
+
+  gameStatus = "play";
+  dino.status = "running";
+  updateLevel();
+  levelInterval = setInterval(updateLevel, levelUpdateFreq);
+  //StartGame();
+}
+
 function init(event){
+  initUI();
+}
+
+function StartGame(){
+
   initScreenAnd3D();
   createLights();
   createFloor()
@@ -659,16 +689,29 @@ function init(event){
   //createCactus();
   createDuCactus();
   createTreCactus();
-  initUI();
-  //resetGame();
-  updateLevel();
-  levelInterval = setInterval(updateLevel, levelUpdateFreq);
+  resetGame();
   loop();
   //setInterval(dino.blink.bind(dino), 3000);
+
 }
 
 function initUI(){
+  fieldDist = document.getElementById("dist");
   fieldDistance = document.getElementById("distValue");
   fieldGameOver = document.getElementById("gameoverInstructions");
+  fieldInstruction = document.getElementById("instructions");
+  fieldWelcomeMessage = document.getElementById("WelcomeMessage");
+  fieldButtonStart = document.getElementById("Start");
+  fieldPicture = document.getElementById("picture");
+  fieldButtonRestart = document.getElementById("Restart");
+  document.getElementById("Start").onclick = function(){
+    //fieldGameOver.className = "Notshow";
+    fieldDist.className = "show";
+    fieldInstruction.className = "Notshow";
+    fieldWelcomeMessage.className = "Notshow";
+    fieldButtonStart.className = "Notshow";
+    fieldPicture.className = "Notshow";
+    StartGame();
+  };
 
 }

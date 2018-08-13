@@ -2,13 +2,13 @@
 <html lang="en" >
 
 <head>
+
   <meta charset="UTF-8">
-  <title>The frantic run of the valorous rabbit</title>
+  <title>T-Rex runner game!</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 
-
-      <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 
 
 </head>
@@ -19,19 +19,28 @@
 <div id="gameoverInstructions">
   Game Over
 </div>
+
+<div>
+  <button id="Restart"><span>Restart</span></button>
+</div>
+
+
 <div id="dist">
     <div class="label">distance</div>
     <div id="distValue">000</div>
 </div>
 
-<div id="instructions">Click to jump<span class="lightInstructions"> </span></div>
+<div>
+		<button id="Start"><span>Ready to start!</span></button>
+</div>
+
+<div id="WelcomeMessage">WELCOME TO THE T-REX RUNNER GAME!</div>
+<img id="picture" src="http://www.skipser.com/test/trex-game/promotion/trex-chrome-game.png"</img>
+<div id="instructions">Instructions: press any button to jump and avoid pterodactyls and cactuses,
+<br>if you touch them the game is over. <br><br>Try to arrive as far as you can!</div>
 
 <script src='js/three.js'></script>
-<script src='js/TweenMax.min.js'></script>
-<script src='js/OrbitControls.js'></script>
 <script  src="js/ProjectIG.js"></script>
-
-
 
 
 </body>

@@ -26,7 +26,7 @@
   transform : translate(-50%,-100%);
   user-select: none;
   transition: all 500ms ease-in-out;
-  
+
   &.show{
     opacity:1;
     transform : translate(-50%,-50%);
@@ -39,8 +39,13 @@
   position:absolute;
   left:50%;
   top:50px;
+  opacity:0;
   transform:translate(-50%,0%);
-  user-select: none;  
+  user-select: none;
+
+  &.show{
+    opacity:1;
+  };
 }
 
 .label{
@@ -50,6 +55,7 @@
   color:#ffa873;//100707;
   font-size:12px;
   letter-spacing:2px;
+  opacity:0;
   text-align:center;
   margin-bottom:5px;
 }
@@ -76,11 +82,11 @@
   letter-spacing:0.5px;
   text-transform: uppercase;
   text-align : center;
-  user-select: none;  
+  user-select: none;
 }
 #credits a {
   color:#544027;
-  
+
 }
 
 #credits a:hover {
@@ -103,4 +109,20 @@
 }
 .lightInstructions {
   color:#5f9042;
+}
+
+
+#WelcomeMessage{
+  position:absolute;
+  width:100%;
+  bottom:0;
+  margin: auto;
+  margin-bottom:50px;
+  font-family:'Voltaire', sans-serif;
+  color:#dc5f45;
+  font-size:16px;
+  letter-spacing:1px;
+  text-transform: uppercase;
+  text-align : center;
+  user-select: none;
 }
