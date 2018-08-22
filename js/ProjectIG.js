@@ -1,12 +1,13 @@
 //THREEJS RELATED VARIABLES
 
 var scene,
-  camera, fieldOfView, aspectRatio, nearPlane, farPlane,
+  camera, camera2, fieldOfView, aspectRatio, nearPlane, farPlane,
   gobalLight, shadowLight, backLight,
   renderer,
   container,
   controls,
   clock;
+var vista = true;
 var delta = 0;
 var floorRadius = 1000;
 var speed = 1;
@@ -16,14 +17,9 @@ var levelInterval;
 var levelUpdateFreq = 5000;
 var initSpeed = 5;
 var maxSpeed = 40;
-var monsterPos = .65;
-var monsterPosTarget = .65;
 var floorRotation = 0;
 var collisionCactus = 10;
-var collisionBonus = 20;
-var gameStatus = "play";
-var cameraPosGame = 160;
-var cameraPosGameOver = 260;
+var gameStatus = "play";;
 var monsterAcceleration = 0.004;
 var malusClearColor = 0xb44b39;
 var malusClearAlpha = 0;
@@ -34,7 +30,6 @@ var cactus;
 var duCactuses = [duCactus];
 var treCactus = [treCactus];
 
-var fieldGameOver, fieldDistance, fieldInstruction, fieldDist, fieldButtonStart, fieldPicture, fieldButtonRestart;
 
 //SCREEN & MOUSE VARIABLES
 
@@ -98,14 +93,14 @@ var PI = Math.PI;
 
 //INIT THREE JS, SCREEN AND MOUSE EVENTS
 
-fieldDist = document.getElementById("dist");
-fieldDistance = document.getElementById("distValue");
-fieldGameOver = document.getElementById("gameoverInstructions");
-fieldInstruction = document.getElementById("instructions");
-fieldWelcomeMessage = document.getElementById("WelcomeMessage");
-fieldButtonStart = document.getElementById("Start");
-fieldPicture = document.getElementById("picture");
-//fieldButtonRestart = document.getElementById("Restart");
+var fieldDist = document.getElementById("dist");
+var fieldDistance = document.getElementById("distValue");
+var fieldGameOver = document.getElementById("gameoverInstructions");
+var fieldInstruction = document.getElementById("instructions");
+var fieldWelcomeMessage = document.getElementById("WelcomeMessage");
+var fieldButtonStart = document.getElementById("Start");
+var fieldPicture = document.getElementById("picture");
+//var fieldButtonRestart = document.getElementById("Restart");
 
 function initScreenAnd3D() {
 
@@ -116,7 +111,7 @@ function initScreenAnd3D() {
 
   scene = new THREE.Scene();
 
-  scene.fog = new THREE.Fog(0xd6eae6, 160,350);
+  //scene.fog = new THREE.Fog(0xd6eae6, 160,350);
 
   aspectRatio = WIDTH / HEIGHT;
   fieldOfView = 50;
@@ -129,9 +124,20 @@ function initScreenAnd3D() {
     farPlane
   );
   camera.position.x = 0;
-  camera.position.z = cameraPosGame;
+  camera.position.z = 160;
   camera.position.y = 30;
   camera.lookAt(new THREE.Vector3(0, 30, 0));
+
+  camera2 = new THREE.PerspectiveCamera(
+    fieldOfView,
+    aspectRatio,
+    nearPlane,
+    farPlane
+  );
+  camera2.position.x = -160;
+  camera2.position.z = 0;
+  camera2.position.y = 80;
+  camera2.lookAt(new THREE.Vector3(-50, 30, 0));
 
   renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -149,7 +155,15 @@ function initScreenAnd3D() {
   window.addEventListener('resize', handleWindowResize, false);
   //document.addEventListener('mousedown', handleMouseDown, false);
   //document.addEventListener("touchend", handleMouseDown, false);
-  document.body.onkeyup = handleMouseDown;
+  document.body.onkeyup = function(e){
+    if (e.keyCode == 32){
+      handleMouseDown();
+    }
+    else if (e.keyCode == 67){
+      vista=!vista;
+    }
+  }
+
   /*
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //controls.minPolarAngle = -Math.PI / 2;
@@ -653,7 +667,14 @@ function loop(){
 }
 
 function render(){
-  renderer.render(scene, camera);
+  if(vista){
+    dino.body.rotation.y = 0;
+    renderer.render(scene, camera);
+  }
+  else{
+    dino.body.rotation.y = -0.3;
+    renderer.render(scene, camera2);
+  }
 }
 
 window.addEventListener('load', init, false);
