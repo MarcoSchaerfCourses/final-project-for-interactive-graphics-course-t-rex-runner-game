@@ -98,6 +98,15 @@ var PI = Math.PI;
 
 //INIT THREE JS, SCREEN AND MOUSE EVENTS
 
+fieldDist = document.getElementById("dist");
+fieldDistance = document.getElementById("distValue");
+fieldGameOver = document.getElementById("gameoverInstructions");
+fieldInstruction = document.getElementById("instructions");
+fieldWelcomeMessage = document.getElementById("WelcomeMessage");
+fieldButtonStart = document.getElementById("Start");
+fieldPicture = document.getElementById("picture");
+//fieldButtonRestart = document.getElementById("Restart");
+
 function initScreenAnd3D() {
 
   HEIGHT = window.innerHeight;
@@ -138,9 +147,9 @@ function initScreenAnd3D() {
   container.appendChild(renderer.domElement);
 
   window.addEventListener('resize', handleWindowResize, false);
-  document.addEventListener('mousedown', handleMouseDown, false);
-  document.addEventListener("touchend", handleMouseDown, false);
-
+  //document.addEventListener('mousedown', handleMouseDown, false);
+  //document.addEventListener("touchend", handleMouseDown, false);
+  document.body.onkeyup = handleMouseDown;
   /*
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //controls.minPolarAngle = -Math.PI / 2;
@@ -595,6 +604,7 @@ function checkCollision(){
   var dm;
   dm = dino.mesh.position.clone().sub(duCactuses[0].mesh.position.clone());
   if(dm.length() < collisionCactus){
+
     gameOver();
   }
 
@@ -603,10 +613,14 @@ function checkCollision(){
 function gameOver(){
   fieldGameOver.className = "show";
   gameStatus = "gameOver";
-  fieldButtonRestart.className = "show";
-  document.getElementById("Restart").onclick = function() { resetGame();};
+  //fieldButtonRestart.className = "show";
+  //fieldButtonRestart.disabled = false;
+  document.addEventListener('mousedown', resetGame);
+  /*fieldButtonRestart.onclick = function() {
+    console.log("click");
+    resetGame();};*/
   //cactus.mesh.visible = false;
-  clearInterval(levelInterval);
+  //clearInterval(levelInterval);
 }
 
 function handleMouseDown(event){
@@ -629,7 +643,7 @@ function loop(){
     //updateCactusPosition();
     updateDuCactusPosition();
     updateTreCactusPosition();
-    //checkCollision();
+    checkCollision();
     /*updateMonsterPosition();
     updateCarrotPosition();
     */
@@ -648,7 +662,7 @@ window.addEventListener('load', init, false);
 function resetGame(){
 
   fieldGameOver.className = "Notshow";
-
+  //fieldButtonRestart.className = "Notshow";
   scene.add(dino.mesh);
   dino.mesh.rotation.y = Math.PI/2 + 0.3;
   dino.mesh.position.x = -70;
@@ -669,6 +683,8 @@ function resetGame(){
   dino.status = "running";
   updateLevel();
   levelInterval = setInterval(updateLevel, levelUpdateFreq);
+  console.log("resetGame");
+  document.removeEventListener('mousedown', resetGame);
   //StartGame();
 }
 
@@ -696,21 +712,15 @@ function StartGame(){
 }
 
 function initUI(){
-  fieldDist = document.getElementById("dist");
-  fieldDistance = document.getElementById("distValue");
-  fieldGameOver = document.getElementById("gameoverInstructions");
-  fieldInstruction = document.getElementById("instructions");
-  fieldWelcomeMessage = document.getElementById("WelcomeMessage");
-  fieldButtonStart = document.getElementById("Start");
-  fieldPicture = document.getElementById("picture");
-  fieldButtonRestart = document.getElementById("Restart");
-  document.getElementById("Start").onclick = function(){
+
+  fieldButtonStart.onclick = function(){
     //fieldGameOver.className = "Notshow";
     fieldDist.className = "show";
     fieldInstruction.className = "Notshow";
     fieldWelcomeMessage.className = "Notshow";
     fieldButtonStart.className = "Notshow";
     fieldPicture.className = "Notshow";
+    fieldButtonStart.disabled = true;
     StartGame();
   };
 
