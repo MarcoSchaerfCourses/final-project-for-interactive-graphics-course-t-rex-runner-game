@@ -616,7 +616,7 @@ function updateDistance(){
 
 function checkCollision(){
   var dm;
-  dm = dino.mesh.position.clone().sub(duCactuses[0].mesh.position.clone());
+  dm = dino.mesh.position.clone().sub(cactus.mesh.position.clone());
   if(dm.length() < collisionCactus){
 
     gameOver();
@@ -654,9 +654,9 @@ function loop(){
       dino.jump();
     }
     updateDistance();
-    //updateCactusPosition();
-    updateDuCactusPosition();
-    updateTreCactusPosition();
+    updateCactusPosition();
+    //updateDuCactusPosition();
+    //updateTreCactusPosition();
     checkCollision();
     /*updateMonsterPosition();
     updateCarrotPosition();
@@ -692,13 +692,16 @@ function resetGame(){
   speed = initSpeed;
   level = 0;
   distance = 0;
-
+  /*
   duCactuses[0].mesh.position.y = floorRadius+4;
   duCactuses[1].mesh.position.y = floorRadius+4;
   duCactuses[2].mesh.position.y = floorRadius+4;
   scene.add(duCactuses[0].mesh);
   scene.add(duCactuses[1].mesh);
   scene.add(duCactuses[2].mesh);
+  */
+  cactus.mesh.position.y = floorRadius+4;
+  scene.add(cactus.mesh);
 
   gameStatus = "play";
   dino.status = "running";
@@ -723,9 +726,9 @@ function StartGame(){
   createFirs();
   createCarrot();
   createBonusParticles();*/
-  //createCactus();
-  createDuCactus();
-  createTreCactus();
+  createCactus();
+  //createDuCactus();
+  //createTreCactus();
   resetGame();
   loop();
   //setInterval(dino.blink.bind(dino), 3000);
