@@ -29,7 +29,9 @@ var treCactus = 3;
 var cactus;
 var duCactuses = [duCactus];
 var treCactus = [treCactus];
-
+var obstaclesNumber = 3;
+var obstacles = [obstaclesNumber];
+var obstaclesIndex = 0;
 
 //SCREEN & MOUSE VARIABLES
 
@@ -116,7 +118,7 @@ function initScreenAnd3D() {
   aspectRatio = WIDTH / HEIGHT;
   fieldOfView = 50;
   nearPlane = 1;
-  farPlane = 2000;
+  farPlane = 5000;
   camera = new THREE.PerspectiveCamera(
     fieldOfView,
     aspectRatio,
@@ -124,8 +126,8 @@ function initScreenAnd3D() {
     farPlane
   );
   camera.position.x = 0;
-  camera.position.z = 160;
-  camera.position.y = 30;
+  camera.position.z = 3160;
+  camera.position.y = 0;
   camera.lookAt(new THREE.Vector3(0, 30, 0));
 
   camera2 = new THREE.PerspectiveCamera(
@@ -207,7 +209,7 @@ function createLights() {
 
 function createFloor() {
 
-  floorShadow = new THREE.Mesh(new THREE.SphereGeometry(floorRadius, 50, 50), new THREE.MeshPhongMaterial({
+  floorShadow = new THREE.Mesh(new THREE.SphereGeometry(floorRadius, 100, 100), new THREE.MeshPhongMaterial({
     color: 0x7abf8e,
     specular:0x000000,
     shininess:1,
@@ -217,17 +219,17 @@ function createFloor() {
   //floorShadow.rotation.x = -Math.PI / 2;
   floorShadow.receiveShadow = true;
 
-  floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-.5, 50, 50), new THREE.MeshBasicMaterial({
+  /*floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-.5, 50, 50), new THREE.MeshBasicMaterial({
     color: 0x7abf8e
   }));
-  //floor.rotation.x = -Math.PI / 2;
-  floorGrass.receiveShadow = false;
+  floor.rotation.x = -Math.PI / 2;
+  floorGrass.receiveShadow = false;*/
 
   floor = new THREE.Group();
-  floor.position.y = -floorRadius;
+  //floor.position.y = -floorRadius;
 
   floor.add(floorShadow);
-  floor.add(floorGrass);
+  //floor.add(floorGrass);
   scene.add(floor);
 
 }
@@ -462,7 +464,7 @@ function createDino() {
 }
 
 Cactus = function() {
-  this.angle = 0;
+  this.angle = Math.PI/180*80;
   //this.status="ready";
   this.mesh = new THREE.Group();
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
@@ -521,38 +523,43 @@ Cactus.prototype.nod = function(){
   var _this = this;
   //var speed = .1 + i*Math.random()*.5;
   var speed = 0;
-  //var angle = -Math.PI/4 + Math.random()*Math.PI/2;
+  var angle = Math.random()*Math.PI/2;
+  console.log(angle);
+}
+
+/*function createObstacle(){
+  if(obstaclesIndex>obstaclesNumber) obstaclesIndex=obstaclesIndex%obstaclesNumber;
+  if(obstacles[obstaclesIndex]==null){
+    obstacles[obstaclesIndex] = createCactus();
+    obstaclesIndex++;
+  }
+}*/
+
+function createObstacles(){
+  for(var i=0; i<obstaclesNumber; i++){
+    obstacles[i] = new Cactus();
+    obstacles[i].angle+=i*Math.PI/180;
+    scene.add(obstacles[i].mesh);
+  }
+}
+
+function createObstacle(index){
+  obstacles[index] = new Cactus();
+  /*if(obstacles[index].angle+Math.PI/2-obstacles[(index+obstaclesNumber-1)%obstaclesNumber].mesh.rotation.z<Math.PI/180){
+    obstacles[index].angle+=1;
+  }*/
+  scene.add(cactus.mesh);
 }
 
 function createCactus(){
   cactus = new Cactus();
-  cactus.mesh.position.y = floorRadius+4;
+  //cactus.mesh.position.y = floorRadius+4;
   //cactuses[i].mesh.position.x = 4*i;
-  cactus.nod;
+  //cactus.nod;
+  //console.log("nod");
   scene.add(cactus.mesh);
+  return cactus;
 }
-
-function createDuCactus(){
-  duCactuses[0] = new Cactus();
-  duCactuses[0].mesh.position.y = floorRadius+4;
-  duCactuses[1] = new Cactus();
-  duCactuses[1].mesh.position.y = floorRadius+4;
-  scene.add(duCactuses[0].mesh);
-  scene.add(duCactuses[1].mesh);
-}
-
-function createTreCactus(){
-  duCactuses[0] = new Cactus();
-  duCactuses[0].mesh.position.y = floorRadius+4;
-  duCactuses[1] = new Cactus();
-  duCactuses[1].mesh.position.y = floorRadius+4;
-  duCactuses[2] = new Cactus();
-  duCactuses[2].mesh.position.y = floorRadius+4;
-  scene.add(duCactuses[0].mesh);
-  scene.add(duCactuses[1].mesh);
-  scene.add(duCactuses[2].mesh);
-}
-
 
 function updateFloorRotation(){
   floorRotation += delta*.02 * speed;
@@ -560,46 +567,24 @@ function updateFloorRotation(){
   floor.rotation.z = floorRotation;
 }
 
-function updateCactusPosition(){
-  if (floorRotation+cactus.angle > 2.5 ){
-    cactus.angle = -floorRotation + Math.random()*.8;
-    //cactus.body.rotation.y = Math.random() * Math.PI*2;
+function updateObstaclesPosition(){
+  for(var i=0; i<obstaclesNumber; i++){
+    if(obstacles[i]!=null){
+      /*if (floorRotation + obstacles[i].angle > 2.5 ){
+        obstacles[i].angle = -floorRotation + Math.random()*.8;
+        //obstacles[i].body.rotation.y = Math.random() * Math.PI*2;
+      }*/
+      obstacles[i].mesh.rotation.z = floorRotation + obstacles[i].angle - Math.PI/2;
+      obstacles[i].mesh.position.y = Math.sin(floorRotation+obstacles[i].angle) * (floorRadius + 72);
+      obstacles[i].mesh.position.x = Math.cos(floorRotation+obstacles[i].angle) * (floorRadius + 72);
+    }
+    if(obstacles[i].mesh.rotation.z>=Math.PI/180*10){
+      scene.remove(obstacles[i].mesh);
+      //obstacles[i] = new Cactus();
+      scene.add(obstacles[i].mesh);
+      //createObstacle(i);
+    }
   }
-  cactus.mesh.rotation.z = floorRotation + cactus.angle - Math.PI/2;
-  cactus.mesh.position.y = -floorRadius + Math.sin(floorRotation+cactus.angle) * (floorRadius+3);
-  cactus.mesh.position.x = Math.cos(floorRotation+cactus.angle) * (floorRadius+3);
-}
-
-function updateDuCactusPosition(){
-  /*if (floorRotation+duCactuses[i].angle > 2.5 ){
-    duCactuses[i].angle = -floorRotation + Math.random()*.8;
-    //cactus.body.rotation.y = Math.random() * Math.PI*2;
-  }*/
-  duCactuses[0].mesh.rotation.z = floorRotation + duCactuses[0].angle - Math.PI/2;
-  duCactuses[0].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[0].angle) * (floorRadius+3);
-  duCactuses[0].mesh.position.x = Math.cos(floorRotation+duCactuses[0].angle) * (floorRadius+3);
-  //console.log(duCactuses[0].mesh.position.x);
-  duCactuses[1].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
-  duCactuses[1].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
-  duCactuses[1].mesh.position.x = duCactuses[0].mesh.position.x + 10;
-}
-
-function updateTreCactusPosition(){
-  /*if (floorRotation+duCactuses[i].angle > 2.5 ){
-    duCactuses[i].angle = -floorRotation + Math.random()*.8;
-    //cactus.body.rotation.y = Math.random() * Math.PI*2;
-  }*/
-  duCactuses[0].mesh.rotation.z = floorRotation + duCactuses[0].angle - Math.PI/2;
-  duCactuses[0].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[0].angle) * (floorRadius+3);
-  duCactuses[0].mesh.position.x = Math.cos(floorRotation+duCactuses[0].angle) * (floorRadius+3);
-  //console.log(duCactuses[0].mesh.position.x);
-  duCactuses[1].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
-  duCactuses[1].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
-  duCactuses[1].mesh.position.x = duCactuses[0].mesh.position.x + 10;
-
-  duCactuses[2].mesh.rotation.z = floorRotation + duCactuses[1].angle - Math.PI/2;
-  duCactuses[2].mesh.position.y = -floorRadius + Math.sin(floorRotation+duCactuses[1].angle) * (floorRadius+3);
-  duCactuses[2].mesh.position.x = duCactuses[1].mesh.position.x + 10;
 }
 
 function updateLevel(){
@@ -616,12 +601,14 @@ function updateDistance(){
 
 function checkCollision(){
   var dm;
-  dm = dino.mesh.position.clone().sub(cactus.mesh.position.clone());
-  if(dm.length() < collisionCactus){
-
-    gameOver();
+  for(var i=0; i<obstaclesNumber; i++){
+    if(obstacles[i]!=null){
+      dm = dino.mesh.position.clone().sub(obstacles[i].mesh.position.clone());
+      if(dm.length() < collisionCactus){
+        gameOver();
+      }
+    }``
   }
-
 }
 
 function gameOver(){
@@ -654,10 +641,11 @@ function loop(){
       dino.jump();
     }
     updateDistance();
-    updateCactusPosition();
+    //updateCactusPosition();
     //updateDuCactusPosition();
     //updateTreCactusPosition();
-    checkCollision();
+    updateObstaclesPosition();
+    //checkCollision();
     /*updateMonsterPosition();
     updateCarrotPosition();
     */
@@ -700,8 +688,8 @@ function resetGame(){
   scene.add(duCactuses[1].mesh);
   scene.add(duCactuses[2].mesh);
   */
-  cactus.mesh.position.y = floorRadius+4;
-  scene.add(cactus.mesh);
+  //obstacles[obstaclesIndex].mesh.position.y = floorRadius+4;
+  //scene.add(obstacles[obstaclesIndex].mesh);
 
   gameStatus = "play";
   dino.status = "running";
@@ -722,11 +710,12 @@ function StartGame(){
   createLights();
   createFloor()
   createDino();
+  createObstacles();
   /*createMonster();
   createFirs();
   createCarrot();
   createBonusParticles();*/
-  createCactus();
+  //createCactus();
   //createDuCactus();
   //createTreCactus();
   resetGame();
