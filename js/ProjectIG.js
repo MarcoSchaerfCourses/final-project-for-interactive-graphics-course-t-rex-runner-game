@@ -29,10 +29,10 @@ var treCactus = 3;
 var cactus;
 var duCactuses = [duCactus];
 var treCactus = [treCactus];
-var obstaclesNumber = 3;
+var obstaclesNumber = 1;
 var obstacles = [obstaclesNumber];
 var obstaclesIndex = 0;
-
+var angle = Math.PI/3;
 //SCREEN & MOUSE VARIABLES
 
 var HEIGHT, WIDTH, windowHalfX, windowHalfY,
@@ -464,7 +464,8 @@ function createDino() {
 }
 
 Cactus = function() {
-  this.angle = Math.PI/180*80;
+  //this.angle = Math.PI/180*80;
+  //this.floorRotation = 0;
   //this.status="ready";
   this.mesh = new THREE.Group();
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
@@ -527,38 +528,18 @@ Cactus.prototype.nod = function(){
   console.log(angle);
 }
 
-/*function createObstacle(){
-  if(obstaclesIndex>obstaclesNumber) obstaclesIndex=obstaclesIndex%obstaclesNumber;
-  if(obstacles[obstaclesIndex]==null){
-    obstacles[obstaclesIndex] = createCactus();
-    obstaclesIndex++;
-  }
-}*/
+Obstacle = function(){
+  this.angle=0;
+  this.position = 0;
+  this.obj = new Cactus()
+}
 
 function createObstacles(){
   for(var i=0; i<obstaclesNumber; i++){
-    obstacles[i] = new Cactus();
-    obstacles[i].angle+=i*Math.PI/180;
-    scene.add(obstacles[i].mesh);
+    obstacles[i] = new Obstacle();
+    obstacles[i].angle=i*Math.PI/30+Math.random()*Math.PI/90;
+    scene.add(obstacles[i].obj.mesh);
   }
-}
-
-function createObstacle(index){
-  obstacles[index] = new Cactus();
-  /*if(obstacles[index].angle+Math.PI/2-obstacles[(index+obstaclesNumber-1)%obstaclesNumber].mesh.rotation.z<Math.PI/180){
-    obstacles[index].angle+=1;
-  }*/
-  scene.add(cactus.mesh);
-}
-
-function createCactus(){
-  cactus = new Cactus();
-  //cactus.mesh.position.y = floorRadius+4;
-  //cactuses[i].mesh.position.x = 4*i;
-  //cactus.nod;
-  //console.log("nod");
-  scene.add(cactus.mesh);
-  return cactus;
 }
 
 function updateFloorRotation(){
@@ -567,23 +548,27 @@ function updateFloorRotation(){
   floor.rotation.z = floorRotation;
 }
 
+var old = 0;
 function updateObstaclesPosition(){
   for(var i=0; i<obstaclesNumber; i++){
-    if(obstacles[i]!=null){
-      /*if (floorRotation + obstacles[i].angle > 2.5 ){
-        obstacles[i].angle = -floorRotation + Math.random()*.8;
-        //obstacles[i].body.rotation.y = Math.random() * Math.PI*2;
-      }*/
-      obstacles[i].mesh.rotation.z = floorRotation + obstacles[i].angle - Math.PI/2;
-      obstacles[i].mesh.position.y = Math.sin(floorRotation+obstacles[i].angle) * (floorRadius + 72);
-      obstacles[i].mesh.position.x = Math.cos(floorRotation+obstacles[i].angle) * (floorRadius + 72);
-    }
-    if(obstacles[i].mesh.rotation.z>=Math.PI/180*10){
-      scene.remove(obstacles[i].mesh);
-      //obstacles[i] = new Cactus();
-      scene.add(obstacles[i].mesh);
-      //createObstacle(i);
-    }
+      obstacles[i].position = (floorRotation + obstacles[i].angle)%(Math.PI/4) + angle;
+
+      if(obstacles[i].position <= old){
+        console.log("Tutte cose");
+        scene.remove(obstacles[i].obj.mesh);
+        obstacles[i].obj = new Cactus();
+        //obstacles[i].angle=i*Math.PI/30 + Math.random()*Math.PI/90;
+        obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
+        obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
+        obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+        scene.add(obstacles[i].obj.mesh);
+      }
+      else{
+        obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
+        obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
+        obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+      }
+      old = obstacles[i].position;
   }
 }
 
