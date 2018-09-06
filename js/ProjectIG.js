@@ -520,18 +520,11 @@ Cactus = function() {
   });
 }
 
-Cactus.prototype.nod = function(){
-  var _this = this;
-  //var speed = .1 + i*Math.random()*.5;
-  var speed = 0;
-  var angle = Math.random()*Math.PI/2;
-  console.log(angle);
-}
-
 Obstacle = function(){
   this.angle=0;
   this.position = 0;
-  this.obj = new Cactus()
+  this.trigger = false;
+  this.obj = new Cactus();
 }
 
 function createObstacles(){
@@ -549,16 +542,22 @@ function updateFloorRotation(){
   floor.rotation.z = floorRotation;
 }
 
+//incomprensibile ma mezzo che funziona
 var old = [obstaclesNumber];
 function updateObstaclesPosition(){
   for(var i=0; i<obstaclesNumber; i++){
     old[i] = obstacles[i].position;
-    obstacles[i].position = floorRotation + obstacles[i].angle;  
-    if(obstacles[i].position < old[i]){
-      console.log("diocan");
+    obstacles[i].position = floorRotation + obstacles[i].angle;
+    if(obstacles[i].position > Math.PI/4){
+      obstacles[i].trigger = false;
+      //console.log("quarantacinque");
+    }
+    if(obstacles[i].position < old[i] && obstacles[i].trigger == false){
+      console.log("zero");
       scene.remove(obstacles[i].obj.mesh);
       obstacles[i].obj = new Cactus();
-      //obstacles[i].angle = i * Math.PI/30 + Math.random() * Math.PI/90;
+      obstacles[i].angle = i * Math.PI/30 + Math.random() * Math.PI/90;
+      obstacles[i].trigger = true;
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
       obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
       obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
@@ -626,9 +625,6 @@ function loop(){
       dino.jump();
     }
     updateDistance();
-    //updateCactusPosition();
-    //updateDuCactusPosition();
-    //updateTreCactusPosition();
     updateObstaclesPosition();
     //checkCollision();
     /*updateMonsterPosition();
