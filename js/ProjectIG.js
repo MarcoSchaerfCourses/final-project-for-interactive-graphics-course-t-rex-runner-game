@@ -29,7 +29,7 @@ var treCactus = 3;
 var cactus;
 var duCactuses = [duCactus];
 var treCactus = [treCactus];
-var obstaclesNumber = 1;
+var obstaclesNumber = 5;
 var obstacles = [obstaclesNumber];
 var obstaclesIndex = 0;
 var angle = Math.PI/3;
@@ -545,30 +545,30 @@ function createObstacles(){
 function updateFloorRotation(){
   floorRotation += delta*.02 * speed;
   floorRotation = floorRotation%(Math.PI*2);
+  floorRotation = floorRotation;
   floor.rotation.z = floorRotation;
 }
 
-var old = 0;
+var old = [obstaclesNumber];
 function updateObstaclesPosition(){
   for(var i=0; i<obstaclesNumber; i++){
-      obstacles[i].position = (floorRotation + obstacles[i].angle)%(Math.PI/4) + angle;
-
-      if(obstacles[i].position <= old){
-        console.log("Tutte cose");
-        scene.remove(obstacles[i].obj.mesh);
-        obstacles[i].obj = new Cactus();
-        //obstacles[i].angle=i*Math.PI/30 + Math.random()*Math.PI/90;
-        obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-        obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
-        obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
-        scene.add(obstacles[i].obj.mesh);
-      }
-      else{
-        obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-        obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
-        obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
-      }
-      old = obstacles[i].position;
+    old[i] = obstacles[i].position;
+    obstacles[i].position = floorRotation + obstacles[i].angle;  
+    if(obstacles[i].position < old[i]){
+      console.log("diocan");
+      scene.remove(obstacles[i].obj.mesh);
+      obstacles[i].obj = new Cactus();
+      //obstacles[i].angle = i * Math.PI/30 + Math.random() * Math.PI/90;
+      obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
+      obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
+      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+      scene.add(obstacles[i].obj.mesh);
+    }
+    else{
+      obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
+      obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
+      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+    }
   }
 }
 
