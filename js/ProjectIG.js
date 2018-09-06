@@ -24,12 +24,7 @@ var monsterAcceleration = 0.004;
 var malusClearColor = 0xb44b39;
 var malusClearAlpha = 0;
 
-var duCactus = 2;
-var treCactus = 3;
-var cactus;
-var duCactuses = [duCactus];
-var treCactus = [treCactus];
-var obstaclesNumber = 5;
+var obstaclesNumber = 50;
 var obstacles = [obstaclesNumber];
 var obstaclesIndex = 0;
 var angle = Math.PI/3;
@@ -520,11 +515,247 @@ Cactus = function() {
   });
 }
 
+CoupleCactus = function() {
+
+  this.angle = 0;
+  this.mesh = new THREE.Group();
+
+  var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
+  this.body = new THREE.Mesh(bodyGeom, skinMat);
+
+  var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
+  this.armHoriz = new THREE.Mesh(cactusArmHoriz, skinMat);
+  this.armHoriz.position.x = this.body.position.x - 5.5;
+  this.armHoriz.position.y = 5;
+  this.body.add(this.armHoriz);
+
+  var cactusArmVertic = new THREE.BoxGeometry(3,7,5);
+  this.armVertic = new THREE.Mesh(cactusArmVertic, skinMat);
+  this.armVertic.position.x = this.armHoriz.position.x + 2;
+  this.armVertic.position.y = 1.5;
+  this.armHoriz.add(this.armVertic);
+
+  var spikeGeom = new THREE.CubeGeometry(.5,2,.5,1);
+  spikeGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0,1,0));
+  for (var i=0; i<9; i++){
+    var row = (i%3);
+    var col = Math.floor(i/3);
+    var sb = new THREE.Mesh(spikeGeom, whiteMat);
+    sb.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    sb.position.z = -3;
+    sb.position.y = -2 + row*10;
+    sb.position.x = -2 + col*2;
+    this.body.add(sb);
+
+    var sf = new THREE.Mesh(spikeGeom, whiteMat);
+    sf.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    sf.position.z = 5;
+    sf.position.y = -2 + row*10;
+    sf.position.x = -2 + col*2;
+    this.body.add(sf);
+
+    var st = new THREE.Mesh(spikeGeom, whiteMat);
+    st.position.y = 17;
+    st.position.x = -2 + row*2;
+    st.position.z = -2 + col*2;
+    st.rotation.z = Math.PI/6 - (Math.PI/6*row) -.5 +  Math.random();
+    this.body.add(st);
+
+    var sr = new THREE.Mesh(spikeGeom, whiteMat);
+    sr.position.x = 3;
+    sr.position.y = -2 + row*10;
+    sr.position.z = -2 + col*2;
+    sr.rotation.z = -Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    this.body.add(sr);
+
+    var sl = new THREE.Mesh(spikeGeom, whiteMat);
+    sl.position.x = -3;
+    sl.position.y = -2 + row*10;
+    sl.position.z = -2 + col*2;
+    sl.rotation.z = Math.PI/2  - (Math.PI/12*row) -.5 +  Math.random();;
+    this.body.add(sl);
+  }
+
+  this.mesh.add(this.body);
+
+  var bodyGeom2 = new THREE.CubeGeometry(6, 36,6,1);
+  this.body2 = new THREE.Mesh(bodyGeom2, skinMat);
+  this.body2.position.x = this.body.position.x + 8;
+  this.body.add(this.body2);
+
+  var cactusArmHoriz2 = new THREE.BoxGeometry(5,4,5);
+  this.armHoriz2 = new THREE.Mesh(cactusArmHoriz2, skinMat);
+  this.armHoriz2.position.x = this.body2.position.x - 3;
+  this.armHoriz2.position.y = 13;
+  this.body2.add(this.armHoriz2);
+
+  var cactusArmVertic2 = new THREE.BoxGeometry(3,7,5);
+  this.armVertic2 = new THREE.Mesh(cactusArmVertic2, skinMat);
+  this.armVertic2.position.x = this.armHoriz2.position.x - 1;
+  this.armVertic2.position.y = 1.5;
+  this.armHoriz2.add(this.armVertic2);
+
+  var spikeGeom2 = new THREE.CubeGeometry(.5,2,.5,1);
+  spikeGeom2.applyMatrix(new THREE.Matrix4().makeTranslation(0,1,0));
+  for (var i=0; i<9; i++){
+    var row = (i%3);
+    var col = Math.floor(i/3);
+    var sb = new THREE.Mesh(spikeGeom2, whiteMat);
+    sb.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    sb.position.z = -3;
+    sb.position.y = -2 + row*10;
+    sb.position.x = -2 + col*2;
+    this.body2.add(sb);
+
+    var sf = new THREE.Mesh(spikeGeom2, whiteMat);
+    sf.rotation.x =-Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    sf.position.z = 5;
+    sf.position.y = -2 + row*10;
+    sf.position.x = -2 + col*2;
+    this.body2.add(sf);
+
+    var st = new THREE.Mesh(spikeGeom2, whiteMat);
+    st.position.y = 17;
+    st.position.x = -2 + row*2;
+    st.position.z = -2 + col*2;
+    st.rotation.z = Math.PI/6 - (Math.PI/6*row) -.5 +  Math.random();
+    this.body2.add(st);
+
+    var sr = new THREE.Mesh(spikeGeom2, whiteMat);
+    sr.position.x = 3;
+    sr.position.y = -2 + row*10;
+    sr.position.z = -2 + col*2;
+    sr.rotation.z = -Math.PI/2 + (Math.PI/12*row) -.5 +  Math.random();
+    this.body2.add(sr);
+
+    var sl = new THREE.Mesh(spikeGeom2, whiteMat);
+    sl.position.x = -3;
+    sl.position.y = -2 + row*10;
+    sl.position.z = -2 + col*2;
+    sl.rotation.z = Math.PI/2  - (Math.PI/12*row) -.5 +  Math.random();;
+    this.body2.add(sl);
+  }
+
+  this.mesh.traverse(function(object) {
+    if (object instanceof THREE.Mesh) {
+      object.castShadow = true;
+      object.receiveShadow = true;
+    }
+  });
+}
+
+Pterodactyl = function() {
+
+  this.angle=0;
+  this.mesh = new THREE.Group();
+  this.body = new THREE.Group();
+
+  var torsoGeom = new THREE.CubeGeometry(6, 6, 12, 1);
+  this.torso = new THREE.Mesh(torsoGeom, darkGreenMat);
+
+  var neckGeom = new THREE.CylinderGeometry(1.5, 1.5, 3);
+  this.neck = new THREE.Mesh(neckGeom, darkGreenMat);
+  this.torso.add(this.neck);
+  this.neck.position.z = -7.5;
+  this.neck.rotation.x = -1.3;
+  this.neck.position.y = 3;
+  this.torso.add(this.neck);
+
+
+  var headGeom = new THREE.CubeGeometry(8, 2, 9, 1);
+  this.head = new THREE.Mesh(headGeom, darkGreenMat);
+  this.head.rotation.x = -0.5;
+  this.head.position.z = 0.5;
+  this.head.position.y = 2.5;
+  this.neck.add(this.head);
+
+  var eyeGeom = new THREE.CubeGeometry(1,2,2);
+  this.eyeL = new THREE.Mesh(eyeGeom, whiteMat);
+  this.eyeL.position.x = 4.5;
+  this.eyeL.position.z = 2;
+  this.eyeL.position.y = 0.5;
+  this.eyeL.castShadow = true;
+  this.head.add(this.eyeL);
+
+  var irisGeom = new THREE.CubeGeometry(.6,1,1);
+
+  this.iris = new THREE.Mesh(irisGeom, blackMat);
+  this.iris.position.x = 0.8;
+  this.iris.position.y = 0.5;
+  this.iris.position.z = -0.5;
+  this.eyeL.add(this.iris);
+
+  this.eyeR = this.eyeL.clone();
+  this.eyeR.children[0].position.x = -this.iris.position.x;
+  this.eyeR.position.x = -this.eyeL.position.x;
+  this.head.add(this.eyeR);
+
+
+  var growthGeom = new THREE.ConeGeometry(1.6, 5);
+  this.growth = new THREE.Mesh(growthGeom, darkGreenMat);
+  this.growth.rotation.x = 2;
+  this.growth.position.y = -1.5;
+  this.growth.position.z = 6.5;
+  this.head.add(this.growth);
+
+
+  var mouthGeom = new THREE.ConeGeometry(5, 9);
+  this.mouth = new THREE.Mesh(mouthGeom, darkGreenMat);
+  this.mouth.position.y = 5.5;
+  this.head.add(this.mouth);
+
+
+  var pawGeom = new THREE.CylinderGeometry(1.5,0,7.5);
+  this.pawFL = new THREE.Mesh(pawGeom, darkGreenMat);
+  this.pawFL.position.y = -3;
+  this.pawFL.position.z = 9.5;
+  this.pawFL.position.x = 4.5;
+  this.pawFL.rotation.x = -1.2;
+  this.torso.add(this.pawFL);
+
+  this.pawFR = this.pawFL.clone();
+  this.pawFR.position.x = - this.pawFL.position.x;
+  this.torso.add(this.pawFR);
+
+  var wingGeom = new THREE.CylinderGeometry(4.5,0,18);
+  this.wingR = new THREE.Mesh(wingGeom, darkGreenMat);
+  this.wingR.position.y = 5;
+  this.wingR.position.z = -0.5;
+  this.wingR.position.x = 11;
+  this.wingR.rotation.z = 2;
+  this.torso.add(this.wingR);
+
+  this.wingL = this.wingR.clone();
+  this.wingL.position.x = - this.wingR.position.x;
+  this.wingL.rotation.z = - this.wingR.rotation.z;
+  this.torso.add(this.wingL);
+
+  this.mesh.add(this.body);
+  this.body.add(this.torso);
+
+  this.body.rotation.y = 1.5;
+  this.body.position.y = 30;
+
+}
+
 Obstacle = function(){
   this.angle=0;
   this.position = 0;
   this.trigger = false;
-  this.obj = new Cactus();
+  this.obj = randomObstacle();
+}
+
+function randomObstacle(){
+  var rnd = parseInt(Math.random()*1000);
+  if ((rnd % 3) == 0){
+    return new Pterodactyl;
+  }
+  else if ((rnd % 2) == 0){
+    return new CoupleCactus;
+  }
+  else{
+    return new Cactus;
+  }
 }
 
 function createObstacles(){
@@ -547,15 +778,15 @@ var old = [obstaclesNumber];
 function updateObstaclesPosition(){
   for(var i=0; i<obstaclesNumber; i++){
     old[i] = obstacles[i].position;
-    obstacles[i].position = floorRotation + obstacles[i].angle;
-    if(obstacles[i].position > Math.PI/4){
+    obstacles[i].position = (floorRotation + obstacles[i].angle)%(Math.PI*2);
+    if(obstacles[i].position > Math.PI/4 && obstacles[i].position < Math.PI/2){
       obstacles[i].trigger = false;
       //console.log("quarantacinque");
     }
     if(obstacles[i].position < old[i] && obstacles[i].trigger == false){
       console.log("zero");
       scene.remove(obstacles[i].obj.mesh);
-      obstacles[i].obj = new Cactus();
+      obstacles[i].obj = randomObstacle();
       obstacles[i].angle = i * Math.PI/30 + Math.random() * Math.PI/90;
       obstacles[i].trigger = true;
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
