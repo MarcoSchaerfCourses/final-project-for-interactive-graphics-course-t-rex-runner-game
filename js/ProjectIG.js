@@ -24,7 +24,7 @@ var monsterAcceleration = 0.004;
 var malusClearColor = 0xb44b39;
 var malusClearAlpha = 0;
 
-var obstaclesNumber = 50;
+var obstaclesNumber = 30;
 var obstacles = [obstaclesNumber];
 var obstaclesIndex = 0;
 var angle = Math.PI/3;
@@ -121,8 +121,8 @@ function initScreenAnd3D() {
     farPlane
   );
   camera.position.x = 0;
-  camera.position.z = 3160;
-  camera.position.y = 0;
+  camera.position.z = 260;
+  camera.position.y = 30;
   camera.lookAt(new THREE.Vector3(0, 30, 0));
 
   camera2 = new THREE.PerspectiveCamera(
@@ -221,7 +221,7 @@ function createFloor() {
   floorGrass.receiveShadow = false;*/
 
   floor = new THREE.Group();
-  //floor.position.y = -floorRadius;
+  floor.position.y = -floorRadius;
 
   floor.add(floorShadow);
   //floor.add(floorGrass);
@@ -411,19 +411,19 @@ Dino.prototype.run = function(){
 
 var up=true;
 var fly=0;
+
 Dino.prototype.jump = function(){
   //if (this.status == "jumping") return;
   //this.status = "jumping";
   var _this = this;
-  var totalSpeed = speed/2;
   var jumpHeight = 35;
-
+  var totalSpeed = speed/2;
   if(up&&this.mesh.position.y<jumpHeight){
     this.mesh.position.y+=totalSpeed;
     return;
   }
   else if(fly<=10){
-    fly+=1;
+    fly+=speed/8;
     return;
   }
   else if(this.mesh.position.y>=jumpHeight&&up){
@@ -431,7 +431,7 @@ Dino.prototype.jump = function(){
     return;
   }
   else if(this.mesh.position.y>-3){
-    this.mesh.position.y-=totalSpeed;
+    this.mesh.position.y -= totalSpeed;
     if(this.mesh.position.y<-3){
       this.mesh.position.y=-3;
     }
@@ -440,12 +440,6 @@ Dino.prototype.jump = function(){
   up=true;
   fly=0;
   this.status="running";
-  /*TweenMax.to(this.mesh.position, totalSpeed/2, {y:jumpHeight, ease:Power2.easeOut});
-  TweenMax.to(this.mesh.position, totalSpeed/2, {y:-3, ease:Power4.easeIn, delay:totalSpeed/2, onComplete: function(){
-    //t = 0;
-    _this.status="running";
-  }});*/
-
 }
 
 function createDino() {
@@ -516,8 +510,6 @@ Cactus = function() {
 }
 
 CoupleCactus = function() {
-
-  this.angle = 0;
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
@@ -645,8 +637,7 @@ CoupleCactus = function() {
 }
 
 Pterodactyl = function() {
-
-  this.angle=0;
+  this.runningCycle = 0;
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
 
@@ -655,12 +646,11 @@ Pterodactyl = function() {
 
   var neckGeom = new THREE.CylinderGeometry(1.5, 1.5, 3);
   this.neck = new THREE.Mesh(neckGeom, darkGreenMat);
-  this.torso.add(this.neck);
+  //this.torso.add(this.neck);
   this.neck.position.z = -7.5;
   this.neck.rotation.x = -1.3;
   this.neck.position.y = 3;
   this.torso.add(this.neck);
-
 
   var headGeom = new THREE.CubeGeometry(8, 2, 9, 1);
   this.head = new THREE.Mesh(headGeom, darkGreenMat);
@@ -690,7 +680,6 @@ Pterodactyl = function() {
   this.eyeR.position.x = -this.eyeL.position.x;
   this.head.add(this.eyeR);
 
-
   var growthGeom = new THREE.ConeGeometry(1.6, 5);
   this.growth = new THREE.Mesh(growthGeom, darkGreenMat);
   this.growth.rotation.x = 2;
@@ -698,12 +687,10 @@ Pterodactyl = function() {
   this.growth.position.z = 6.5;
   this.head.add(this.growth);
 
-
   var mouthGeom = new THREE.ConeGeometry(5, 9);
   this.mouth = new THREE.Mesh(mouthGeom, darkGreenMat);
   this.mouth.position.y = 5.5;
   this.head.add(this.mouth);
-
 
   var pawGeom = new THREE.CylinderGeometry(1.5,0,7.5);
   this.pawFL = new THREE.Mesh(pawGeom, darkGreenMat);
@@ -717,40 +704,65 @@ Pterodactyl = function() {
   this.pawFR.position.x = - this.pawFL.position.x;
   this.torso.add(this.pawFR);
 
-  var wingGeom = new THREE.CylinderGeometry(4.5,0,18);
-  this.wingR = new THREE.Mesh(wingGeom, darkGreenMat);
-  this.wingR.position.y = 5;
-  this.wingR.position.z = -0.5;
+  var wingGeomR = new THREE.CylinderGeometry(4.5,0,18);
+  wingGeomR.applyMatrix(new THREE.Matrix4().makeTranslation(4.5,0,0));
+  wingGeomR.applyMatrix(new THREE.Matrix4().makeRotationZ(90));
+  this.wingR = new THREE.Mesh(wingGeomR, darkGreenMat);
+  this.wingR.position.y = 3;
+  this.wingR.position.z = 0;
   this.wingR.position.x = 11;
-  this.wingR.rotation.z = 2;
+  //this.wingR.rotation.z = 2;
   this.torso.add(this.wingR);
+  /*this.wingL = this.wingR.clone();
 
-  this.wingL = this.wingR.clone();
   this.wingL.position.x = - this.wingR.position.x;
   this.wingL.rotation.z = - this.wingR.rotation.z;
+  this.torso.add(this.wingL);*/
+
+  var wingGeomL = new THREE.CylinderGeometry(4.5,0,18);
+  wingGeomL.applyMatrix(new THREE.Matrix4().makeTranslation(4.5,0,0));
+  wingGeomL.applyMatrix(new THREE.Matrix4().makeRotationZ(-90));
+  this.wingL = new THREE.Mesh(wingGeomL, darkGreenMat);
+  this.wingL.position.y = 10;
+  this.wingL.position.z = 0;
+  this.wingL.position.x = -7;
+  //this.wingL.rotation.z = 2;
   this.torso.add(this.wingL);
 
-  this.mesh.add(this.body);
   this.body.add(this.torso);
-
   this.body.rotation.y = 1.5;
   this.body.position.y = 30;
+  this.mesh.add(this.body);
+}
 
+Pterodactyl.prototype.fly = function(){
+  var s = Math.min(speed,maxSpeed);
+  this.runningCycle += delta * s * .7;
+  this.runningCycle = this.runningCycle % (Math.PI*2);
+  var t = this.runningCycle;
+  var amp = 2;
+  var disp = .2;
+
+  this.head.rotation.x = -.5 + Math.sin(t+2)*Math.PI/10;
+  //this.wingR.rotation.z = 1 + Math.sin(t+6)*Math.PI/10;
+  //this.pawBUR.rotation.z = - 1 - Math.sin(t+6)*Math.PI/10;
+  //this.wingL.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
+  //this.wingR.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
 }
 
 Obstacle = function(){
   this.angle=0;
   this.position = 0;
+  this.type = randomNumber();
   this.trigger = false;
-  this.obj = randomObstacle();
+  this.obj = randomObstacle(this.type)
 }
 
-function randomObstacle(){
-  var rnd = parseInt(Math.random()*1000);
-  if ((rnd % 3) == 0){
+function randomObstacle(num){
+  if (num == 3){
     return new Pterodactyl;
   }
-  else if ((rnd % 2) == 0){
+  else if (num == 2){
     return new CoupleCactus;
   }
   else{
@@ -758,10 +770,23 @@ function randomObstacle(){
   }
 }
 
+function randomNumber(){
+  var rnd = parseInt(Math.random()*1000);
+  if ((rnd % 3) == 0){
+    return 3;
+  }
+  else if ((rnd % 2) == 0){
+    return 2;
+  }
+  else{
+    return 1;
+  }
+}
+
 function createObstacles(){
   for(var i=0; i<obstaclesNumber; i++){
     obstacles[i] = new Obstacle();
-    obstacles[i].angle=i*Math.PI/30+Math.random()*Math.PI/90;
+    obstacles[i].angle = i * Math.PI/15 + Math.random() * Math.PI/90;
     scene.add(obstacles[i].obj.mesh);
   }
 }
@@ -786,18 +811,27 @@ function updateObstaclesPosition(){
     if(obstacles[i].position < old[i] && obstacles[i].trigger == false){
       console.log("zero");
       scene.remove(obstacles[i].obj.mesh);
-      obstacles[i].obj = randomObstacle();
-      obstacles[i].angle = i * Math.PI/30 + Math.random() * Math.PI/90;
+      obstacles[i].type = randomNumber();
+      obstacles[i].obj = randomObstacle(obstacles[i].type);
+      obstacles[i].angle = i * Math.PI/15 + Math.random() * Math.PI/90;
       obstacles[i].trigger = true;
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-      obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
-      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 18);
+      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 15);
       scene.add(obstacles[i].obj.mesh);
     }
     else{
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-      obstacles[i].obj.mesh.position.y = Math.sin(obstacles[i].position) * (floorRadius + 72);
-      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 72);
+      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 18);
+      obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 15);
+    }
+  }
+}
+
+function pterodactylFly(){
+  for(var i=0; i<obstaclesNumber; i++){
+    if(obstacles[i].type == 3){
+      obstacles[i].obj.fly();
     }
   }
 }
@@ -805,7 +839,7 @@ function updateObstaclesPosition(){
 function updateLevel(){
   if (speed >= maxSpeed) return;
   level++;
-  speed += 2;
+  speed += 1;
 }
 
 function updateDistance(){
@@ -855,6 +889,7 @@ function loop(){
     if (dino.status == "jumping"){
       dino.jump();
     }
+    pterodactylFly();
     updateDistance();
     updateObstaclesPosition();
     //checkCollision();
@@ -878,7 +913,6 @@ function render(){
 }
 
 window.addEventListener('load', init, false);
-
 
 function resetGame(){
 
