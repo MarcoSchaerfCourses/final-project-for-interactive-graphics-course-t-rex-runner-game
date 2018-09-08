@@ -211,20 +211,22 @@ function createFloor() {
     transparent:true,
     opacity:.5
   }));
-  //floorShadow.rotation.x = -Math.PI / 2;
+  floorShadow.rotation.x = -Math.PI / 2;
   floorShadow.receiveShadow = true;
-
-  /*floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-.5, 50, 50), new THREE.MeshBasicMaterial({
-    color: 0x7abf8e
-  }));
-  floor.rotation.x = -Math.PI / 2;
-  floorGrass.receiveShadow = false;*/
 
   floor = new THREE.Group();
   floor.position.y = -floorRadius;
 
+  floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-.5, 50, 50), new THREE.MeshBasicMaterial({
+    color: 0x7abf8e
+  }));
+  floor.rotation.x = -Math.PI / 2;
+  floorGrass.receiveShadow = false;
+
+
+
   floor.add(floorShadow);
-  //floor.add(floorGrass);
+  floor.add(floorGrass);
   scene.add(floor);
 
 }
@@ -720,12 +722,12 @@ Pterodactyl = function() {
   this.torso.add(this.wingL);*/
 
   var wingGeomL = new THREE.CylinderGeometry(4.5,0,18);
-  wingGeomL.applyMatrix(new THREE.Matrix4().makeTranslation(4.5,0,0));
+  wingGeomL.applyMatrix(new THREE.Matrix4().makeTranslation(-4.5,0,0));
   wingGeomL.applyMatrix(new THREE.Matrix4().makeRotationZ(-90));
   this.wingL = new THREE.Mesh(wingGeomL, darkGreenMat);
-  this.wingL.position.y = 10;
+  this.wingL.position.y = 3;
   this.wingL.position.z = 0;
-  this.wingL.position.x = -7;
+  this.wingL.position.x = -11;
   //this.wingL.rotation.z = 2;
   this.torso.add(this.wingL);
 
@@ -733,6 +735,12 @@ Pterodactyl = function() {
   this.body.rotation.y = 1.5;
   this.body.position.y = 30;
   this.mesh.add(this.body);
+  this.mesh.traverse(function(object) {
+    if (object instanceof THREE.Mesh) {
+      object.castShadow = true;
+      object.receiveShadow = true;
+    }
+  });
 }
 
 Pterodactyl.prototype.fly = function(){
@@ -746,8 +754,8 @@ Pterodactyl.prototype.fly = function(){
   this.head.rotation.x = -.5 + Math.sin(t+2)*Math.PI/10;
   //this.wingR.rotation.z = 1 + Math.sin(t+6)*Math.PI/10;
   //this.pawBUR.rotation.z = - 1 - Math.sin(t+6)*Math.PI/10;
-  //this.wingL.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
-  //this.wingR.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
+  this.wingL.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
+  this.wingR.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
 }
 
 Obstacle = function(){
@@ -851,12 +859,10 @@ function updateDistance(){
 function checkCollision(){
   var dm;
   for(var i=0; i<obstaclesNumber; i++){
-    if(obstacles[i]!=null){
-      dm = dino.mesh.position.clone().sub(obstacles[i].mesh.position.clone());
-      if(dm.length() < collisionCactus){
-        gameOver();
-      }
-    }``
+    dm = dino.mesh.position.clone().sub(obstacles[i].obj.mesh.position.clone());
+    if(dm.length() < collisionCactus){
+      gameOver();
+    }
   }
 }
 
@@ -892,7 +898,7 @@ function loop(){
     pterodactylFly();
     updateDistance();
     updateObstaclesPosition();
-    //checkCollision();
+    checkCollision();
     /*updateMonsterPosition();
     updateCarrotPosition();
     */
