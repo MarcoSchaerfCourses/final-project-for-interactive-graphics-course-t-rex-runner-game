@@ -824,13 +824,13 @@ function updateObstaclesPosition(){
       obstacles[i].angle = i * Math.PI/15 + Math.random() * Math.PI/90;
       obstacles[i].trigger = true;
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 18);
+      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 15);
       obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 15);
       scene.add(obstacles[i].obj.mesh);
     }
     else{
       obstacles[i].obj.mesh.rotation.z = obstacles[i].position - Math.PI/2;
-      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 18);
+      obstacles[i].obj.mesh.position.y = -floorRadius + Math.sin(obstacles[i].position) * (floorRadius + 15);
       obstacles[i].obj.mesh.position.x = Math.cos(obstacles[i].position) * (floorRadius + 15);
     }
   }
@@ -860,8 +860,20 @@ function checkCollision(){
   var dm;
   for(var i=0; i<obstaclesNumber; i++){
     dm = dino.mesh.position.clone().sub(obstacles[i].obj.mesh.position.clone());
-    if(dm.length() < collisionCactus){
-      gameOver();
+
+    if(obstacles[i].type==3){
+      dm.x+=5;
+      if(dm.length() < 13){
+        //console.log(dm);
+        gameOver();
+      }
+    }
+    if(obstacles[i].type<=2){
+      //console.log(dm);
+      dm.y+=5;
+      if(dm.length() < 15){
+        gameOver();
+      }
     }
   }
 }
