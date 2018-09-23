@@ -218,8 +218,9 @@ function createFloor() {
   floor.position.y = -floorRadius;
 
   floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-.5, 50, 50), new THREE.MeshBasicMaterial({
-    color: 0x7abf8e
+    map: new THREE.TextureLoader().load( '/js/textures/grass.jpg');
   }));
+
   floor.rotation.x = -Math.PI / 2;
   floorGrass.receiveShadow = false;
 
