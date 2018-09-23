@@ -97,7 +97,7 @@ var fieldInstruction = document.getElementById("instructions");
 var fieldWelcomeMessage = document.getElementById("WelcomeMessage");
 var fieldButtonStart = document.getElementById("Start");
 var fieldPicture = document.getElementById("picture");
-//var fieldButtonRestart = document.getElementById("Restart");
+var fieldRestart = document.getElementById("Restart");
 
 function initScreenAnd3D() {
 
@@ -880,8 +880,8 @@ function checkCollision(){
 
 function gameOver(){
   fieldGameOver.className = "show";
+  fieldRestart.className = "show";
   gameStatus = "gameOver";
-  //fieldButtonRestart.className = "show";
   //fieldButtonRestart.disabled = false;
   document.addEventListener('mousedown', resetGame);
   /*fieldButtonRestart.onclick = function() {
@@ -935,7 +935,7 @@ window.addEventListener('load', init, false);
 function resetGame(){
 
   fieldGameOver.className = "Notshow";
-  //fieldButtonRestart.className = "Notshow";
+  fieldRestart.className = "Notshow";
   scene.add(dino.mesh);
   dino.mesh.rotation.y = Math.PI/2 + 0.3;
   dino.mesh.position.x = -70;
