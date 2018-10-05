@@ -45,35 +45,23 @@ var HEIGHT, WIDTH, windowHalfX, windowHalfY,
 var blackMat = new THREE.MeshPhongMaterial({
     color: 0x100707,
     shading:THREE.FlatShading,
-  });
+});
 
-var brownMat = new THREE.MeshPhongMaterial({
-    color: 0xb44b39,
-    shininess:0,
-    shading:THREE.FlatShading,
-  });
+var whiteMat = new THREE.MeshPhongMaterial({
+  color: 0xa49789,
+  shading:THREE.FlatShading,
+});
 
 var greenMat = new THREE.MeshPhongMaterial({
-    color: 0x7abf8e,
-    shininess:0,
-    shading:THREE.FlatShading,
-  });
-
-  var whiteMat = new THREE.MeshPhongMaterial({
-    color: 0xa49789,
-    shading:THREE.FlatShading,
-  });
-
-  var skinMat = new THREE.MeshPhongMaterial({
-    color: 0x347C2C,
-    shading:THREE.FlatShading
-  });
+  color: 0x347C2C,
+  shading:THREE.FlatShading
+});
 
 var darkGreenMat = new THREE.MeshPhongMaterial({
     color: 0x254117,
     shininess:0,
     shading:THREE.FlatShading,
-  });
+});
 
 
 //Init ThreeJS, lights, screen and mouse events
@@ -220,8 +208,8 @@ Dino = function() {
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
   var segments = 8;
-  var torsoGeom = new THREE.CubeGeometry(15,20,15,8,8,8);  
 
+  var torsoGeom = new THREE.CubeGeometry(15,20,15,8,8,8);
   torsoGeom.faces.forEach( (face, idx) => {
     console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
     if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
@@ -230,7 +218,6 @@ Dino = function() {
   })
 
   var material = new THREE.MeshBasicMaterial( {color: 0xffffff, vertexColors: THREE.FaceColors} );
-
 
   this.torso = new THREE.Mesh(torsoGeom, material);
   this.torso.rotation.x = 0.33;
@@ -408,7 +395,6 @@ Dino.prototype.run = function(){
 }
 
 
-
 Dino.prototype.jump = function(){
 
   var _this = this;
@@ -461,16 +447,16 @@ Cactus = function() {
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
-  this.body = new THREE.Mesh(bodyGeom, skinMat);
+  this.body = new THREE.Mesh(bodyGeom, greenMat);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
-  this.armHoriz = new THREE.Mesh(cactusArmHoriz, skinMat);
+  this.armHoriz = new THREE.Mesh(cactusArmHoriz, greenMat);
   this.armHoriz.position.x = this.body.position.x - 5.5;
   this.armHoriz.position.y = 5;
   this.body.add(this.armHoriz);
 
   var cactusArmVertic = new THREE.BoxGeometry(3,7,5);
-  this.armVertic = new THREE.Mesh(cactusArmVertic, skinMat);
+  this.armVertic = new THREE.Mesh(cactusArmVertic, greenMat);
   this.armVertic.position.x = this.armHoriz.position.x + 2;
   this.armVertic.position.y = 1.5;
   this.armHoriz.add(this.armVertic);
@@ -517,13 +503,13 @@ Cactus = function() {
   }
 
   var cactusArmHoriz2 = new THREE.BoxGeometry(5,4,5);
-  this.armHoriz2 = new THREE.Mesh(cactusArmHoriz2, skinMat);
+  this.armHoriz2 = new THREE.Mesh(cactusArmHoriz2, greenMat);
   this.armHoriz2.position.x = this.body.position.x + 5.5;
   this.armHoriz2.position.y = 13;
   this.body.add(this.armHoriz2);
 
   var cactusArmVertic2 = new THREE.BoxGeometry(3,7,5);
-  this.armVertic2 = new THREE.Mesh(cactusArmVertic2, skinMat);
+  this.armVertic2 = new THREE.Mesh(cactusArmVertic2, greenMat);
   this.armVertic2.position.x = this.armHoriz2.position.x - 1.5;
   this.armVertic2.position.y = 1.5;
   this.armHoriz2.add(this.armVertic2);
@@ -544,16 +530,16 @@ CoupleCactus = function() {
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
-  this.body = new THREE.Mesh(bodyGeom, skinMat);
+  this.body = new THREE.Mesh(bodyGeom, greenMat);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
-  this.armHoriz = new THREE.Mesh(cactusArmHoriz, skinMat);
+  this.armHoriz = new THREE.Mesh(cactusArmHoriz, greenMat);
   this.armHoriz.position.x = this.body.position.x - 5;
   this.armHoriz.position.y = 5;
   this.body.add(this.armHoriz);
 
   var cactusArmVertic = new THREE.BoxGeometry(3,7,5);
-  this.armVertic = new THREE.Mesh(cactusArmVertic, skinMat);
+  this.armVertic = new THREE.Mesh(cactusArmVertic, greenMat);
   this.armVertic.position.x = this.armHoriz.position.x + 2;
   this.armVertic.position.y = 1.5;
   this.armHoriz.add(this.armVertic);
@@ -602,18 +588,18 @@ CoupleCactus = function() {
   this.mesh.add(this.body);
 
   var bodyGeom2 = new THREE.CubeGeometry(6, 36,6,1);
-  this.body2 = new THREE.Mesh(bodyGeom2, skinMat);
+  this.body2 = new THREE.Mesh(bodyGeom2, greenMat);
   this.body2.position.x = this.body.position.x + 8;
   this.body.add(this.body2);
 
   var cactusArmHoriz2 = new THREE.BoxGeometry(5,4,5);
-  this.armHoriz2 = new THREE.Mesh(cactusArmHoriz2, skinMat);
+  this.armHoriz2 = new THREE.Mesh(cactusArmHoriz2, greenMat);
   this.armHoriz2.position.x = this.body2.position.x - 3;
   this.armHoriz2.position.y = 13;
   this.body2.add(this.armHoriz2);
 
   var cactusArmVertic2 = new THREE.BoxGeometry(3,7,5);
-  this.armVertic2 = new THREE.Mesh(cactusArmVertic2, skinMat);
+  this.armVertic2 = new THREE.Mesh(cactusArmVertic2, greenMat);
   this.armVertic2.position.x = this.armHoriz2.position.x - 1.5;
   this.armVertic2.position.y = 1.5;
   this.armHoriz2.add(this.armVertic2);
