@@ -75,7 +75,6 @@ var fieldButtonStart = document.getElementById("Start");
 var fieldPicture = document.getElementById("picture");
 var fieldRestart = document.getElementById("Restart");
 
-
 function initScreenAnd3D() {
 
   HEIGHT = window.innerHeight;
@@ -136,11 +135,9 @@ function initScreenAnd3D() {
   clock = new THREE.Clock();
 }
 
-
 function handleMouseDown(event){
   if (gameStatus == "play") dino.status="jumping";
 }
-
 
 function handleWindowResize() {
 
@@ -152,7 +149,6 @@ function handleWindowResize() {
   camera.aspect = WIDTH / HEIGHT;
   camera.updateProjectionMatrix();
 }
-
 
 function createLights() {
 
@@ -172,7 +168,6 @@ function createLights() {
   scene.add(globalLight);
   scene.add(shadowLight);
 }
-
 
 function createFloor() {
 
@@ -199,7 +194,6 @@ function createFloor() {
   scene.add(floor);
 }
 
-
 //Creation of hierarchical models and their functions
 
 Dino = function() {
@@ -208,18 +202,9 @@ Dino = function() {
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
   var segments = 8;
+  var torsoGeom = new THREE.CubeGeometry(15,20,15);
 
-  var torsoGeom = new THREE.CubeGeometry(15,20,15,8,8,8);
-  torsoGeom.faces.forEach( (face, idx) => {
-    console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
-    if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
-      face.color.setRGB(0,1,1);
-    }
-  })
-
-  var material = new THREE.MeshBasicMaterial( {color: 0xffffff, vertexColors: THREE.FaceColors} );
-
-  this.torso = new THREE.Mesh(torsoGeom, material);
+  this.torso = new THREE.Mesh(torsoGeom, darkGreenMat);
   this.torso.rotation.x = 0.33;
 
   var headGeom = new THREE.CubeGeometry(20,20,40, 1);
@@ -371,7 +356,6 @@ Dino = function() {
   });
 }
 
-
 Dino.prototype.run = function(){
 
   this.status = "running";
@@ -393,7 +377,6 @@ Dino.prototype.run = function(){
   this.head.rotation.x = -0.5 + Math.sin(t + Math.PI/2)*amp*.1;
   this.mouth.rotation.x = .2 + Math.sin(t+Math.PI+.3)*.4;
 }
-
 
 Dino.prototype.jump = function(){
 
@@ -429,7 +412,6 @@ Dino.prototype.jump = function(){
   this.status = "running";
 }
 
-
 function createDino() {
 
   dino = new Dino();
@@ -440,14 +422,25 @@ function createDino() {
   scene.add(dino.mesh);
 }
 
-
-
 Cactus = function() {
 
   this.mesh = new THREE.Group();
 
-  var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
-  this.body = new THREE.Mesh(bodyGeom, greenMat);
+  var bodyGeom = new THREE.CubeGeometry(6, 36,6, 3, 12 ,3);
+
+
+  var segments = 8;
+
+  bodyGeom.faces.forEach( (face, idx) => {
+    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
+    if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
+      face.color.setRGB(0.7,0.7,0.7);
+    }
+  })
+
+  var material = new THREE.MeshBasicMaterial( {color: 0x347C2C, vertexColors: THREE.FaceColors} );
+
+  this.body = new THREE.Mesh(bodyGeom, material);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
   this.armHoriz = new THREE.Mesh(cactusArmHoriz, greenMat);
@@ -524,13 +517,24 @@ Cactus = function() {
   });
 }
 
-
 CoupleCactus = function() {
 
   this.mesh = new THREE.Group();
 
-  var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
-  this.body = new THREE.Mesh(bodyGeom, greenMat);
+  var bodyGeom = new THREE.CubeGeometry(6, 36,6,3,12,3);
+
+  var segments = 8;
+
+  bodyGeom.faces.forEach( (face, idx) => {
+    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
+    if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
+      face.color.setRGB(0.7,0.7,0.7);
+    }
+  })
+
+  var material = new THREE.MeshBasicMaterial( {color: 0x347C2C, vertexColors: THREE.FaceColors} );
+
+  this.body = new THREE.Mesh(bodyGeom, material);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
   this.armHoriz = new THREE.Mesh(cactusArmHoriz, greenMat);
@@ -587,8 +591,16 @@ CoupleCactus = function() {
 
   this.mesh.add(this.body);
 
-  var bodyGeom2 = new THREE.CubeGeometry(6, 36,6,1);
-  this.body2 = new THREE.Mesh(bodyGeom2, greenMat);
+  var bodyGeom2 = new THREE.CubeGeometry(6, 36,6,3,12,3);
+  this.body2 = new THREE.Mesh(bodyGeom2, material);
+
+  bodyGeom2.faces.forEach( (face, idx) => {
+    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
+    if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
+      face.color.setRGB(0.7,0.7,0.7);
+    }
+  })
+
   this.body2.position.x = this.body.position.x + 8;
   this.body.add(this.body2);
 
@@ -652,7 +664,6 @@ CoupleCactus = function() {
     }
   });
 }
-
 
 Pterodactyl = function() {
 
@@ -752,7 +763,6 @@ Pterodactyl = function() {
   });
 }
 
-
 Pterodactyl.prototype.fly = function(){
 
   var s = Math.min(speed,maxSpeed);
@@ -768,7 +778,6 @@ Pterodactyl.prototype.fly = function(){
   this.wingR.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
 }
 
-
 Obstacle = function(){
 
   this.angle=0;
@@ -777,7 +786,6 @@ Obstacle = function(){
   this.trigger = false;
   this.obj = randomObstacle(this.type)
 }
-
 
 function randomObstacle(num){
   if (num == 3){
@@ -790,7 +798,6 @@ function randomObstacle(num){
     return new Cactus;
   }
 }
-
 
 function randomNumber(){
   var rnd = parseInt(Math.random()*1000);
@@ -805,7 +812,6 @@ function randomNumber(){
   }
 }
 
-
 function createObstacles(){
 
   for(var i=0; i<obstaclesNumber; i++){
@@ -814,7 +820,6 @@ function createObstacles(){
     scene.add(obstacles[i].obj.mesh);
   }
 }
-
 
 //Management of the game and update of the variables
 
@@ -837,7 +842,6 @@ function loop(){
   render();
   requestAnimationFrame(loop);
 }
-
 
 function updateFloorRotation(){
 
@@ -930,7 +934,6 @@ function render(){
   }
 }
 
-
 window.addEventListener('load', init, false);
 
 function init(event){
@@ -946,7 +949,6 @@ function init(event){
   };
 }
 
-
 function StartGame(){
 
   initScreenAnd3D();
@@ -957,7 +959,6 @@ function StartGame(){
   resetGame();
   loop();
 }
-
 
 function resetGame(){
 
