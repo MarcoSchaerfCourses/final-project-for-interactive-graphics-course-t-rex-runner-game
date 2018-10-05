@@ -1,4 +1,4 @@
-//THREEJS RELATED VARIABLES
+//Variables
 
 var scene,
   camera, camera2, fieldOfView, aspectRatio, nearPlane, farPlane,
@@ -20,15 +20,18 @@ var maxSpeed = 40;
 var floorRotation = 0;
 var collisionCactus = 10;
 var gameStatus = "play";;
-var monsterAcceleration = 0.004;
 var malusClearColor = 0xb44b39;
 var malusClearAlpha = 0;
+var PI = Math.PI;
 
 var obstaclesNumber = 30;
 var obstacles = [obstaclesNumber];
-var obstaclesIndex = 0;
+var old = [obstaclesNumber];
 var angle = Math.PI/3;
-//SCREEN & MOUSE VARIABLES
+
+var dino;
+var up = true;
+var fly = 0;
 
 var HEIGHT, WIDTH, windowHalfX, windowHalfY,
   mousePos = {
@@ -36,11 +39,9 @@ var HEIGHT, WIDTH, windowHalfX, windowHalfY,
     y: 0
   };
 
-//3D OBJECTS VARIABLES
-
-var dino;
 
 // Materials
+
 var blackMat = new THREE.MeshPhongMaterial({
     color: 0x100707,
     shading:THREE.FlatShading,
@@ -58,21 +59,11 @@ var greenMat = new THREE.MeshPhongMaterial({
     shading:THREE.FlatShading,
   });
 
-  var pinkMat = new THREE.MeshPhongMaterial({
-    color: 0xdc5f45,//0xb43b29,//0xff5b49,
-    shininess:0,
-    shading:THREE.FlatShading,
-  });
-
-  var lightBrownMat = new THREE.MeshPhongMaterial({
-    color: 0xe07a57,
-    shading:THREE.FlatShading,
-  });
-
   var whiteMat = new THREE.MeshPhongMaterial({
     color: 0xa49789,
     shading:THREE.FlatShading,
   });
+
   var skinMat = new THREE.MeshPhongMaterial({
     color: 0x347C2C,
     shading:THREE.FlatShading
@@ -84,11 +75,8 @@ var darkGreenMat = new THREE.MeshPhongMaterial({
     shading:THREE.FlatShading,
   });
 
-// OTHER VARIABLES
 
-var PI = Math.PI;
-
-//INIT THREE JS, SCREEN AND MOUSE EVENTS
+//Init ThreeJS, lights, screen and mouse events
 
 var fieldDist = document.getElementById("dist");
 var fieldDistance = document.getElementById("distValue");
@@ -98,6 +86,7 @@ var fieldWelcomeMessage = document.getElementById("WelcomeMessage");
 var fieldButtonStart = document.getElementById("Start");
 var fieldPicture = document.getElementById("picture");
 var fieldRestart = document.getElementById("Restart");
+
 
 function initScreenAnd3D() {
 
@@ -112,6 +101,7 @@ function initScreenAnd3D() {
   fieldOfView = 50;
   nearPlane = 1;
   farPlane = 5000;
+
   camera = new THREE.PerspectiveCamera(
     fieldOfView,
     aspectRatio,
@@ -140,7 +130,6 @@ function initScreenAnd3D() {
   });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor( malusClearColor, malusClearAlpha);
-
   renderer.setSize(WIDTH, HEIGHT);
   renderer.shadowMap.enabled = true;
 
@@ -159,7 +148,14 @@ function initScreenAnd3D() {
   clock = new THREE.Clock();
 }
 
+
+function handleMouseDown(event){
+  if (gameStatus == "play") dino.status="jumping";
+}
+
+
 function handleWindowResize() {
+
   HEIGHT = window.innerHeight;
   WIDTH = window.innerWidth;
   windowHalfX = WIDTH / 2;
@@ -169,7 +165,9 @@ function handleWindowResize() {
   camera.updateProjectionMatrix();
 }
 
+
 function createLights() {
+
   globalLight = new THREE.AmbientLight(0xffffff, .9);
 
   shadowLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -187,7 +185,9 @@ function createLights() {
   scene.add(shadowLight);
 }
 
+
 function createFloor() {
+
   floorShadow = new THREE.Mesh(new THREE.SphereGeometry(floorRadius, 100, 100), new THREE.MeshPhongMaterial({
     color: 0x7abf8e,
     specular:0x000000,
@@ -200,19 +200,22 @@ function createFloor() {
 
   floor = new THREE.Group();
   floor.position.y = -floorRadius;
+  floor.rotation.x = -Math.PI / 2;
 
   var material  = new THREE.MeshPhongMaterial()
   material.map = new THREE.TextureLoader().load('/assets/index.jpg')
 
   floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-0.5, 100, 100), new THREE.MeshBasicMaterial({color: 0x7abf4e}));
-
-  floor.rotation.x = -Math.PI / 2;
   floorGrass.receiveShadow = false;
 
   floor.add(floorShadow);
   floor.add(floorGrass);
+
   scene.add(floor);
 }
+
+
+//Creation of hierarchical models and their functions
 
 Dino = function() {
   this.status = "running";
@@ -372,14 +375,15 @@ Dino = function() {
   });
 }
 
-Dino.prototype.run = function(){
-  this.status = "running";
 
+Dino.prototype.run = function(){
+
+  this.status = "running";
   var s = Math.min(speed,maxSpeed);
   this.runningCycle += delta * s * .7;
   this.runningCycle = this.runningCycle % (Math.PI*2);
-  var t = this.runningCycle;
 
+  var t = this.runningCycle;
   var amp = 2;
   var disp = .2;
 
@@ -394,38 +398,45 @@ Dino.prototype.run = function(){
   this.mouth.rotation.x = .2 + Math.sin(t+Math.PI+.3)*.4;
 }
 
-var up=true;
-var fly=0;
+
 
 Dino.prototype.jump = function(){
+
   var _this = this;
   var jumpHeight = 35;
   var totalSpeed = speed/2;
-  if(up&&this.mesh.position.y<jumpHeight){
-    this.mesh.position.y+=totalSpeed;
+
+  if(up && this.mesh.position.y < jumpHeight){
+    this.mesh.position.y += totalSpeed;
     return;
   }
-  else if(fly<=10){
-    fly+=speed/8;
+
+  else if (fly <= 10){
+    fly += speed/8;
     return;
   }
-  else if(this.mesh.position.y>=jumpHeight&&up){
-    up=false;
+
+  else if (this.mesh.position.y >= jumpHeight&&up){
+    up = false;
     return;
   }
-  else if(this.mesh.position.y>-3){
+
+  else if (this.mesh.position.y >- 3){
     this.mesh.position.y -= totalSpeed;
-    if(this.mesh.position.y<-3){
-      this.mesh.position.y=-3;
+    if (this.mesh.position.y <- 3){
+      this.mesh.position.y =- 3;
     }
     return;
   }
-  up=true;
-  fly=0;
-  this.status="running";
+
+  up = true;
+  fly = 0;
+  this.status = "running";
 }
 
+
 function createDino() {
+
   dino = new Dino();
   dino.mesh.scale.set(0.5,0.5,0.5);
   dino.mesh.rotation.y = Math.PI/2 + 0.3;
@@ -434,7 +445,10 @@ function createDino() {
   scene.add(dino.mesh);
 }
 
+
+
 Cactus = function() {
+
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
@@ -515,7 +529,9 @@ Cactus = function() {
   });
 }
 
+
 CoupleCactus = function() {
+
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,1);
@@ -642,7 +658,9 @@ CoupleCactus = function() {
   });
 }
 
+
 Pterodactyl = function() {
+
   this.runningCycle = 0;
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
@@ -739,10 +757,13 @@ Pterodactyl = function() {
   });
 }
 
+
 Pterodactyl.prototype.fly = function(){
+
   var s = Math.min(speed,maxSpeed);
   this.runningCycle += delta * s * .7;
   this.runningCycle = this.runningCycle % (Math.PI*2);
+
   var t = this.runningCycle;
   var amp = 2;
   var disp = .2;
@@ -752,13 +773,16 @@ Pterodactyl.prototype.fly = function(){
   this.wingR.rotation.x = 2 + Math.sin(t - Math.PI/2)*Math.PI/6*amp;
 }
 
+
 Obstacle = function(){
+
   this.angle=0;
   this.position = 0;
   this.type = randomNumber();
   this.trigger = false;
   this.obj = randomObstacle(this.type)
 }
+
 
 function randomObstacle(num){
   if (num == 3){
@@ -771,6 +795,7 @@ function randomObstacle(num){
     return new Cactus;
   }
 }
+
 
 function randomNumber(){
   var rnd = parseInt(Math.random()*1000);
@@ -785,7 +810,9 @@ function randomNumber(){
   }
 }
 
+
 function createObstacles(){
+
   for(var i=0; i<obstaclesNumber; i++){
     obstacles[i] = new Obstacle();
     obstacles[i].angle = i * Math.PI/15 + Math.random() * Math.PI/90;
@@ -793,16 +820,56 @@ function createObstacles(){
   }
 }
 
+
+//Management of the game and update of the variables
+
+function loop(){
+
+  delta = clock.getDelta();
+  updateFloorRotation();
+  if (gameStatus == "play"){
+    if (dino.status == "running"){
+      dino.run();
+    }
+    if (dino.status == "jumping"){
+      dino.jump();
+    }
+    pterodactylFly();
+    updateDistance();
+    updateObstaclesPosition();
+    checkCollision();
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+
 function updateFloorRotation(){
+
   floorRotation += delta*.02 * speed;
   floorRotation = floorRotation%(Math.PI*2);
   floorRotation = floorRotation;
   floor.rotation.z = floorRotation;
 }
 
-//incomprensibile ma mezzo che funziona
-var old = [obstaclesNumber];
+function pterodactylFly(){
+
+  for(var i=0; i<obstaclesNumber; i++){
+    if(obstacles[i].type == 3){
+      obstacles[i].obj.fly();
+    }
+  }
+}
+
+function updateDistance(){
+
+  distance += delta*speed;
+  var d = distance/2;
+  fieldDistance.innerHTML = Math.floor(d);
+}
+
 function updateObstaclesPosition(){
+
   for(var i=0; i<obstaclesNumber; i++){
     old[i] = obstacles[i].position;
     obstacles[i].position = (floorRotation + obstacles[i].angle)%(Math.PI*2);
@@ -810,7 +877,6 @@ function updateObstaclesPosition(){
       obstacles[i].trigger = false;
     }
     if(obstacles[i].position < old[i] && obstacles[i].trigger == false){
-      console.log("zero");
       scene.remove(obstacles[i].obj.mesh);
       obstacles[i].type = randomNumber();
       obstacles[i].obj = randomObstacle(obstacles[i].type);
@@ -829,27 +895,8 @@ function updateObstaclesPosition(){
   }
 }
 
-function pterodactylFly(){
-  for(var i=0; i<obstaclesNumber; i++){
-    if(obstacles[i].type == 3){
-      obstacles[i].obj.fly();
-    }
-  }
-}
-
-function updateLevel(){
-  if (speed >= maxSpeed) return;
-  level++;
-  speed += 1;
-}
-
-function updateDistance(){
-  distance += delta*speed;
-  var d = distance/2;
-  fieldDistance.innerHTML = Math.floor(d);
-}
-
 function checkCollision(){
+
   var dm;
   for(var i=0; i<obstaclesNumber; i++){
     dm = dino.mesh.position.clone().sub(obstacles[i].obj.mesh.position.clone());
@@ -869,36 +916,15 @@ function checkCollision(){
 }
 
 function gameOver(){
+
   fieldGameOver.className = "show";
   fieldRestart.className = "show";
   gameStatus = "gameOver";
   document.addEventListener('mousedown', resetGame);
 }
 
-function handleMouseDown(event){
-  if (gameStatus == "play") dino.status="jumping";
-}
-
-function loop(){
-  delta = clock.getDelta();
-  updateFloorRotation();
-  if (gameStatus == "play"){
-    if (dino.status == "running"){
-      dino.run();
-    }
-    if (dino.status == "jumping"){
-      dino.jump();
-    }
-    pterodactylFly();
-    updateDistance();
-    updateObstaclesPosition();
-    checkCollision();
-  }
-  render();
-  requestAnimationFrame(loop);
-}
-
 function render(){
+
   if(vista){
     dino.body.rotation.y = 0;
     renderer.render(scene, camera);
@@ -909,7 +935,34 @@ function render(){
   }
 }
 
+
 window.addEventListener('load', init, false);
+
+function init(event){
+
+  fieldButtonStart.onclick = function(){
+    fieldDist.className = "show";
+    fieldInstruction.className = "Notshow";
+    fieldWelcomeMessage.className = "Notshow";
+    fieldButtonStart.className = "Notshow";
+    fieldPicture.className = "Notshow";
+    fieldButtonStart.disabled = true;
+    StartGame();
+  };
+}
+
+
+function StartGame(){
+
+  initScreenAnd3D();
+  createLights();
+  createFloor()
+  createDino();
+  createObstacles();
+  resetGame();
+  loop();
+}
+
 
 function resetGame(){
 
@@ -931,30 +984,9 @@ function resetGame(){
   document.removeEventListener('mousedown', resetGame);
 }
 
-function init(event){
-  initUI();
-}
+function updateLevel(){
 
-function StartGame(){
-  initScreenAnd3D();
-  createLights();
-  createFloor()
-  createDino();
-  createObstacles();
-  resetGame();
-  loop();
-}
-
-function initUI(){
-
-  fieldButtonStart.onclick = function(){
-    fieldDist.className = "show";
-    fieldInstruction.className = "Notshow";
-    fieldWelcomeMessage.className = "Notshow";
-    fieldButtonStart.className = "Notshow";
-    fieldPicture.className = "Notshow";
-    fieldButtonStart.disabled = true;
-    StartGame();
-  };
-
+  if (speed >= maxSpeed) return;
+  level++;
+  speed += 1;
 }
