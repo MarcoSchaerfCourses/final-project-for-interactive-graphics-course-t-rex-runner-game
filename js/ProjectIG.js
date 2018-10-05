@@ -13,6 +13,7 @@ var floorRadius = 1000;
 var speed = 1;
 var distance = 0;
 var level = 1;
+var segments = 8;
 var levelInterval;
 var levelUpdateFreq = 5000;
 var initSpeed = 6;
@@ -74,6 +75,7 @@ var fieldWelcomeMessage = document.getElementById("WelcomeMessage");
 var fieldButtonStart = document.getElementById("Start");
 var fieldPicture = document.getElementById("picture");
 var fieldRestart = document.getElementById("Restart");
+
 
 function initScreenAnd3D() {
 
@@ -194,6 +196,7 @@ function createFloor() {
   scene.add(floor);
 }
 
+
 //Creation of hierarchical models and their functions
 
 Dino = function() {
@@ -201,9 +204,8 @@ Dino = function() {
   this.runningCycle = 0;
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
-  var segments = 8;
-  var torsoGeom = new THREE.CubeGeometry(15,20,15);
 
+  var torsoGeom = new THREE.CubeGeometry(15,20,15);
   this.torso = new THREE.Mesh(torsoGeom, darkGreenMat);
   this.torso.rotation.x = 0.33;
 
@@ -427,19 +429,13 @@ Cactus = function() {
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6, 3, 12 ,3);
-
-
-  var segments = 8;
-
   bodyGeom.faces.forEach( (face, idx) => {
-    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
     if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
       face.color.setRGB(0.7,0.7,0.7);
     }
   })
 
   var material = new THREE.MeshBasicMaterial( {color: 0x347C2C, vertexColors: THREE.FaceColors} );
-
   this.body = new THREE.Mesh(bodyGeom, material);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
@@ -522,18 +518,13 @@ CoupleCactus = function() {
   this.mesh = new THREE.Group();
 
   var bodyGeom = new THREE.CubeGeometry(6, 36,6,3,12,3);
-
-  var segments = 8;
-
   bodyGeom.faces.forEach( (face, idx) => {
-    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
     if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
       face.color.setRGB(0.7,0.7,0.7);
     }
   })
 
   var material = new THREE.MeshBasicMaterial( {color: 0x347C2C, vertexColors: THREE.FaceColors} );
-
   this.body = new THREE.Mesh(bodyGeom, material);
 
   var cactusArmHoriz = new THREE.BoxGeometry(4,4,5);
@@ -593,14 +584,11 @@ CoupleCactus = function() {
 
   var bodyGeom2 = new THREE.CubeGeometry(6, 36,6,3,12,3);
   this.body2 = new THREE.Mesh(bodyGeom2, material);
-
   bodyGeom2.faces.forEach( (face, idx) => {
-    //console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
     if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
       face.color.setRGB(0.7,0.7,0.7);
     }
   })
-
   this.body2.position.x = this.body.position.x + 8;
   this.body.add(this.body2);
 
@@ -820,6 +808,7 @@ function createObstacles(){
     scene.add(obstacles[i].obj.mesh);
   }
 }
+
 
 //Management of the game and update of the variables
 
