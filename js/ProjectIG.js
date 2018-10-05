@@ -15,7 +15,7 @@ var distance = 0;
 var level = 1;
 var levelInterval;
 var levelUpdateFreq = 5000;
-var initSpeed = 5;
+var initSpeed = 6;
 var maxSpeed = 40;
 var floorRotation = 0;
 var collisionCactus = 10;
@@ -202,9 +202,6 @@ function createFloor() {
   floor.position.y = -floorRadius;
   floor.rotation.x = -Math.PI / 2;
 
-  var material  = new THREE.MeshPhongMaterial()
-  material.map = new THREE.TextureLoader().load('/assets/index.jpg')
-
   floorGrass = new THREE.Mesh(new THREE.SphereGeometry(floorRadius-0.5, 100, 100), new THREE.MeshBasicMaterial({color: 0x7abf4e}));
   floorGrass.receiveShadow = false;
 
@@ -222,8 +219,20 @@ Dino = function() {
   this.runningCycle = 0;
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
-  var torsoGeom = new THREE.CubeGeometry(15,20,15, 1);
-  this.torso = new THREE.Mesh(torsoGeom, darkGreenMat);
+  var segments = 8;
+  var torsoGeom = new THREE.CubeGeometry(15,20,15,8,8,8);  
+
+  torsoGeom.faces.forEach( (face, idx) => {
+    console.log((idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4);
+    if ( (idx + (Math.floor(idx/(segments*2)) % 2 * 2)) % 4 < 2 ) {
+      face.color.setRGB(0,1,1);
+    }
+  })
+
+  var material = new THREE.MeshBasicMaterial( {color: 0xffffff, vertexColors: THREE.FaceColors} );
+
+
+  this.torso = new THREE.Mesh(torsoGeom, material);
   this.torso.rotation.x = 0.33;
 
   var headGeom = new THREE.CubeGeometry(20,20,40, 1);
@@ -988,5 +997,5 @@ function updateLevel(){
 
   if (speed >= maxSpeed) return;
   level++;
-  speed += 1;
+  speed += 0.5;
 }
